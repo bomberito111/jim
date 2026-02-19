@@ -743,6 +743,94 @@ async function sset(key,val){
 async function spush(key,item){let a=await sget(key)||[];a.push(item);await sset(key,a);return a;}
 async function exhist(id){return await sget('ex_'+id)||[];}
 
+/* ═══════════════════════════════════════════════
+   WORKOUT PERSISTENCE — survives Android backgrounding
+   Saves the entire activeW state to localStorage every time
+   something changes, so we can restore on reopen.
+═══════════════════════════════════════════════ */
+const WK_KEY='h4_active_workout';
+const WK_VIEW_KEY='h4_last_view';
+
+function saveActiveW(){
+  if(!activeW){
+    localStorage.removeItem(WK_KEY);
+    return;
+  }
+  // Flash the "saved" dot indicator in workout view
+  const dot=document.getElementById('wp-save-dot');
+  if(dot){dot.style.opacity='1';setTimeout(()=>dot.style.opacity='0',1200);}
+  // Serialize: deep-copy but strip non-serializable refs
+  const snapshot={
+    dow:activeW.dow,
+    rn:activeW.rn,
+    emoji:activeW.emoji,
+    start:activeW.start,
+    exercises:activeW.exercises.map(ex=>({
+      id:ex.id,
+      name:ex.name,
+      g:ex.g||'',
+      sets_count:ex.sets_count||ex.sets.length,
+      rMin:ex.rMin,
+      rMax:ex.rMax,
+      rest:ex.rest,
+      type:ex.type||'iso',
+      notes:ex.notes||'',
+      video:ex.video||'',
+      muscles:ex.muscles||[],
+      steps:ex.steps||[],
+      partial:ex.partial||false,
+      suggest:ex.suggest||null,
+      // Store last session summary (not full object to keep it small)
+      lastSets:ex.last?.sets||null,
+      sets:ex.sets.map(s=>({
+        n:s.n,
+        w:s.w||'',
+        r:s.r||'',
+        rir:s.rir||'',
+        done:s.done||false
+      }))
+    }))
+  };
+  localStorage.setItem(WK_KEY, JSON.stringify(snapshot));
+}
+
+function clearActiveW(){
+  localStorage.removeItem(WK_KEY);
+}
+
+function restoreActiveW(){
+  const raw=localStorage.getItem(WK_KEY);
+  if(!raw) return null;
+  try{
+    const snap=JSON.parse(raw);
+    if(!snap||!snap.exercises) return null;
+    // Re-hydrate exercises — merge with current ROUTINE data
+    const allEx=getAllEx();
+    const exercises=snap.exercises.map(ex=>{
+      // Find the routine definition to get current notes/video etc
+      const routineEx=allEx.find(e=>e.id===ex.id)||{};
+      return {
+        ...routineEx,   // base from routine (has notes, video, steps...)
+        ...ex,          // override with saved state (has sets, partial, suggest...)
+        last: ex.lastSets ? {sets:ex.lastSets} : null,
+        // sets already restored from snap
+      };
+    });
+    return {...snap, exercises};
+  }catch(e){
+    localStorage.removeItem(WK_KEY);
+    return null;
+  }
+}
+
+// Save current view so we can restore it on reopen
+function saveView(v){
+  localStorage.setItem(WK_VIEW_KEY, v);
+}
+function getLastView(){
+  return localStorage.getItem(WK_VIEW_KEY)||'home';
+}
+
 function loadRoutine(){
   const saved=localStorage.getItem('h4_routine');
   if(saved){try{ROUTINE=JSON.parse(saved);return;}catch(e){}}
@@ -767,11 +855,43 @@ async function boot(){
   }
   const acc=await sget('accent');
   if(acc) applyAccent(acc.v,acc.r);
-  // if curDay is 0 or 6 (weekend), default to showing Monday
   if(ROUTINE[curDay]?.rest) curDay=1;
+
+  // ── RESTORE ACTIVE WORKOUT if app was closed mid-session ──
+  const saved=restoreActiveW();
+  if(saved){
+    activeW=saved;
+    setTimeout(()=>toast('🔄 Retomando tu entrenamiento...'),400);
+    nav('workout');
+    return;
+  }
   await renderHome();
 }
 boot();
+
+// ── LIFECYCLE HANDLERS — keep workout alive when Android backgrounds the app ──
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    // Going to background: persist everything immediately
+    saveActiveW();
+    saveView(curView);
+  } else {
+    // Returning to foreground: restart timers if workout active
+    if(activeW && curView==='workout') startElapsed();
+  }
+});
+
+window.addEventListener('pagehide',()=>{
+  saveActiveW();
+  saveView(curView);
+},{capture:true});
+
+window.addEventListener('pageshow',(e)=>{
+  if(e.persisted && activeW) startElapsed();
+});
+
+// Safety autosave every 10 seconds while workout is active
+setInterval(()=>{ if(activeW) saveActiveW(); },10000);
 
 /* ═══════════════════════════════════════════════
    NAVIGATION
@@ -785,6 +905,7 @@ function nav(v){
   });
   document.getElementById('views').scrollTop=0;
   curView=v;
+  saveView(v); // remember last view for restore
   if(v==='home') renderHome();
   else if(v==='workout') renderWorkout();
   else if(v==='progress') renderProgress();
@@ -802,6 +923,8 @@ async function renderHome(){
   const day=ROUTINE[curDay]||ROUTINE[dow]||{rest:true,exercises:[]};
   const sessions=await sget('sessions')||[];
   const body=(await sget('bodyLogs')||[]).slice(-1)[0]||{};
+  // Show resume banner if workout is in progress
+  const wkInProgress=activeW!=null;
   const trainedDates=new Set(sessions.map(s=>s.date?.split('T')[0]));
 
   // Streak
@@ -832,6 +955,25 @@ async function renderHome(){
   }
 
   // Week calendar
+  // Build resume-workout banner HTML
+  const resumeBannerHtml=wkInProgress?`
+    <div style="
+      background:linear-gradient(135deg,rgba(var(--ac2),.18),rgba(var(--ac2),.06));
+      border:1px solid rgba(var(--ac2),.4);border-radius:var(--r);
+      padding:13px 15px;margin-bottom:12px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      animation:vu .3s ease;
+    ">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-size:22px;animation:pulse 2s ease infinite">⏳</div>
+        <div>
+          <div style="font-weight:700;font-size:14px;color:var(--text)">Entrenamiento en curso</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">${activeW.emoji} ${activeW.rn} · ${activeW.exercises.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0)} series completadas</div>
+        </div>
+      </div>
+      <button class="btn bp bsm" onclick="nav('workout')" style="flex-shrink:0;white-space:nowrap">Retomar →</button>
+    </div>`:'';
+
   const weekHtml=DAY_NAMES.map((d,i)=>{
     const diff=i-dow;
     const dc=new Date();dc.setDate(dc.getDate()+diff);
@@ -861,7 +1003,7 @@ async function renderHome(){
 
   const recent=sessions.slice(-4).reverse();
 
-  el.innerHTML=`
+  el.innerHTML=resumeBannerHtml+`
 <div class="hero">
   <div class="hero-left">
     <h2>${today.toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'})}</h2>
@@ -944,6 +1086,7 @@ async function startW(dow){
       sets:Array.from({length:ex.sets},(_,i)=>({n:i+1,w:'',r:'',rir:'',done:false}))});
   }
   activeW={dow,rn:day.name,emoji:day.emoji,start:Date.now(),exercises};
+  saveActiveW(); // save immediately so we can restore if app is killed during loading
   nav('workout');
 }
 
@@ -964,7 +1107,10 @@ function renderWorkout(){
   let html=`<div class="wp-sticky">
     <div class="wp-row1">
       <div class="wp-title">${activeW.emoji} ${activeW.rn}</div>
-      <div class="wp-timer-pill" id="wp-el">0:00</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div id="wp-save-dot" title="Guardado automáticamente" style="width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);opacity:0;transition:opacity .5s" ></div>
+        <div class="wp-timer-pill" id="wp-el">0:00</div>
+      </div>
     </div>
     <div class="wp-meta">
       <span class="wp-sets-done">${done}/${tots} series</span>
@@ -1038,16 +1184,24 @@ function renderWorkout(){
   setTimeout(()=>scrollToActiveSet(),200);
 }
 
-function upS(ei,si,f,v){if(activeW) activeW.exercises[ei].sets[si][f]=v;}
-function upPart(ei,v){if(activeW) activeW.exercises[ei].partial=v;}
+function upS(ei,si,f,v){
+  if(!activeW) return;
+  activeW.exercises[ei].sets[si][f]=v;
+  saveActiveW(); // persist on every input
+}
+function upPart(ei,v){
+  if(!activeW) return;
+  activeW.exercises[ei].partial=v;
+  saveActiveW();
+}
 
 function deleteSet(ei,si){
   if(!activeW) return;
   const ex=activeW.exercises[ei];
   if(ex.sets.length<=1){toast('⚠️ Necesitas al menos 1 serie');return;}
   ex.sets.splice(si,1);
-  // Re-number
   ex.sets.forEach((s,i)=>s.n=i+1);
+  saveActiveW();
   renderWorkout();
   setTimeout(()=>{
     const block=document.getElementById(`exb-${ei}`);
@@ -1065,7 +1219,6 @@ function toggleS(ei,si,restSec){
   if(row) row.classList.toggle('set-done',s.done);
   if(s.done){
     startRT(restSec);
-    // Update active-set highlight
     const exEl=document.getElementById(`exb-${ei}`);
     if(exEl) exEl.classList.toggle('active-ex',true);
     setTimeout(()=>scrollToActiveSet(ei,si),300);
@@ -1073,6 +1226,7 @@ function toggleS(ei,si,restSec){
     stopRT();
   }
   updateProgress();
+  saveActiveW(); // persist after every set completion
 }
 
 function scrollToActiveSet(lastEi, lastSi){
@@ -1110,8 +1264,7 @@ function addS(ei){
   if(!activeW) return;
   const ex=activeW.exercises[ei];
   ex.sets.push({n:ex.sets.length+1,w:'',r:'',rir:'',done:false});
-  const container=document.getElementById(`exb-${ei}`);
-  // Add a new row without full re-render
+  saveActiveW();
   renderWorkout();
   setTimeout(()=>{
     const b=document.getElementById(`exb-${ei}`);
@@ -1170,8 +1323,9 @@ async function finishW(){
   await spush('sessions',sess);
   clearInterval(elIval);stopRT();
   finishedSession=sess;
-  showCel(sess);
   activeW=null;
+  clearActiveW(); // workout done — remove the saved draft
+  showCel(sess);
 }
 
 function showCel(s){
@@ -1200,7 +1354,7 @@ function cancelWorkout(){
         <div class="sheet-handle"></div>
         <div class="sheet-title">⚠️ ¿Cancelar entrenamiento?</div>
         <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px">Se perderán todas las series registradas en esta sesión.</p>
-        <button class="btn bdng btn-w" style="margin-bottom:10px" onclick="activeW=null;clearInterval(elIval);skipRT();document.getElementById('cancel-ol').remove();nav('home')">Sí, cancelar sin guardar</button>
+        <button class="btn bdng btn-w" style="margin-bottom:10px" onclick="activeW=null;clearActiveW();clearInterval(elIval);skipRT();document.getElementById('cancel-ol').remove();nav('home')">Sí, cancelar sin guardar</button>
         <button class="btn bg btn-w" onclick="document.getElementById('cancel-ol').remove()">Seguir entrenando</button>
       </div>
     </div>`);
