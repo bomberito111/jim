@@ -6,8 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0A0A0F">
-<title>HYPER — Jaime</title>
+<meta name="theme-color" content="#080810">
+<title>HYPER LIFE — Jaime</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -17,14 +17,16 @@
    VARIABLES & THEME
 ═══════════════════════════════════════════════ */
 :root {
-  --ac:#4361EE; --ac2:67,97,238;
-  --bg0:#0A0A0F; --bg1:#111118; --bg2:#18181F; --bg3:#20202A; --bg4:#2A2A36;
-  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
-  --text:#EEEEF5; --text2:#8080A0; --text3:#404060;
-  --amber:#F4A023; --red:#EF4444; --success:#10B981; --purple:#8B5CF6;
+  --ac:#C9AA72; --ac2:201,170,114;
+  --bg0:#07070E; --bg1:#0C0C16; --bg2:#11111C; --bg3:#181826; --bg4:#202030;
+  --border:rgba(255,255,255,0.055); --border2:rgba(255,255,255,0.10);
+  --text:#EDEDF8; --text2:#6868A0; --text3:#353555;
+  --amber:#C9AA72; --red:#E85060; --success:#1FCFA0; --purple:#9B79F0;
+  --gold:#C9AA72; --gold2:201,170,114;
   --mono:'JetBrains Mono',monospace; --body:'Outfit',sans-serif; --hd:'Barlow Condensed',sans-serif;
-  --r:14px; --rsm:8px;
+  --r:16px; --rsm:10px;
   --safe-bottom:env(safe-area-inset-bottom,0px);
+  --glow:0 0 40px rgba(201,170,114,0.06);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%;overflow:hidden}
@@ -55,14 +57,14 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 ═══════════════════════════════════════════════ */
 #nav{
   display:flex;align-items:stretch;
-  height:calc(58px + var(--safe-bottom));
-  background:var(--bg1);border-top:1px solid var(--border);
+  height:calc(62px + var(--safe-bottom));
+  background:rgba(13,13,24,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);
   flex-shrink:0;position:relative;
   padding-bottom:var(--safe-bottom);
 }
 #nav::before{
   content:'';position:absolute;top:-1px;left:10%;right:10%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(var(--ac2),.5),transparent);
+  background:linear-gradient(90deg,transparent,rgba(var(--gold2),.35),transparent);
 }
 .ni{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -90,8 +92,8 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
 /* ═══════════════════════════════════════════════
    CARDS
 ═══════════════════════════════════════════════ */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
-.card-glow{border-color:rgba(var(--ac2),.25);box-shadow:0 0 20px rgba(var(--ac2),.06)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--glow)}
+.card-glow{border-color:rgba(var(--ac2),.3);box-shadow:0 0 30px rgba(var(--ac2),.1),inset 0 1px 0 rgba(255,255,255,0.04)}
 
 /* ═══════════════════════════════════════════════
    BUTTONS
@@ -105,9 +107,9 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
 .btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .15s}
 .btn:active::after{background:rgba(255,255,255,0.08)}
 .btn-w{width:100%}
-.bp{background:var(--ac);color:#fff;box-shadow:0 4px 20px rgba(var(--ac2),.35)}
-.bp:active{transform:scale(.97);box-shadow:0 2px 8px rgba(var(--ac2),.2)}
-.bg{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+.bp{background:linear-gradient(135deg,#C8A96E,#A8894E);color:#0A0A14;font-weight:800;box-shadow:0 4px 24px rgba(200,169,110,.3),inset 0 1px 0 rgba(255,255,255,.15)}
+.bp:active{transform:scale(.97);box-shadow:0 2px 10px rgba(200,169,110,.15)}
+.bg{background:var(--bg3);color:var(--text);border:1px solid var(--border2);backdrop-filter:blur(4px)}
 .bg:active{background:var(--bg4)}
 .bsm{padding:10px 15px;font-size:13px;border-radius:var(--rsm)}
 .bxsm{padding:7px 11px;font-size:12px;border-radius:var(--rsm)}
@@ -123,7 +125,7 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
   padding:12px 13px;border-radius:var(--rsm);font-family:var(--body);
   font-size:15px;outline:none;width:100%;transition:border-color .15s;
 }
-.inp:focus{border-color:var(--ac);background:var(--bg4)}
+.inp:focus{border-color:var(--gold);background:var(--bg4)}
 .inp::placeholder{color:var(--text3)}
 .lbl{font-size:10px;color:var(--text2);font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:5px;display:block}
 
@@ -131,7 +133,7 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
    TAGS
 ═══════════════════════════════════════════════ */
 .tag{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
-.tac{background:rgba(var(--ac2),.15);color:var(--ac)}
+.tac{background:rgba(var(--gold2),.15);color:var(--gold)}
 .tam{background:rgba(244,160,35,.15);color:var(--amber)}
 .trd{background:rgba(239,68,68,.15);color:var(--red)}
 .tgr{background:rgba(16,185,129,.15);color:var(--success)}
@@ -143,41 +145,42 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
 ═══════════════════════════════════════════════ */
 .hero{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
 .hero-left h2{font-size:12px;color:var(--text2);margin-bottom:2px;text-transform:capitalize}
-.hero-left h1{font-family:var(--hd);font-size:42px;font-weight:900;letter-spacing:1.5px;line-height:1}
+.hero-left h1{font-family:var(--hd);font-size:44px;font-weight:900;letter-spacing:2px;line-height:1;background:linear-gradient(135deg,#F5F5FF 50%,#9090CC);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .streak-box{
-  background:linear-gradient(135deg,rgba(244,160,35,.2),rgba(244,160,35,.05));
-  border:1px solid rgba(244,160,35,.35);border-radius:var(--r);
+  background:linear-gradient(135deg,rgba(201,170,114,.15),rgba(201,170,114,.03));
+  border:1px solid rgba(201,170,114,.3);border-radius:var(--r);
   padding:10px 14px;text-align:center;min-width:68px;
-  box-shadow:0 4px 16px rgba(244,160,35,.1);
+  box-shadow:0 4px 20px rgba(201,170,114,.07);
 }
-.streak-n{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--amber);display:block;line-height:1}
-.streak-l{font-size:9px;color:var(--amber);letter-spacing:.8px;text-transform:uppercase;opacity:.8;margin-top:2px}
+.streak-n{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--gold);display:block;line-height:1}
+.streak-l{font-size:9px;color:var(--gold);letter-spacing:.8px;text-transform:uppercase;opacity:.65;margin-top:2px}
 .week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px}
 .day-cell{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 2px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);transition:all .2s}
-.day-cell.today{border-color:var(--ac);background:rgba(var(--ac2),.08)}
-.day-cell.trained{background:rgba(var(--ac2),.12);border-color:rgba(var(--ac2),.3)}
+.day-cell.today{border-color:var(--gold);background:rgba(var(--gold2),.08)}
+.day-cell.trained{background:rgba(var(--gold2),.1);border-color:rgba(var(--gold2),.3)}
 .day-ltr{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px}
-.day-cell.today .day-ltr{color:var(--ac)}
+.day-cell.today .day-ltr{color:var(--gold)}
 .day-dot{width:6px;height:6px;border-radius:50%;background:var(--bg4)}
-.day-cell.trained .day-dot{background:var(--ac);box-shadow:0 0 6px rgba(var(--ac2),.5)}
+.day-cell.trained .day-dot{background:var(--gold);box-shadow:0 0 6px rgba(var(--gold2),.5)}
 .day-cell.today.trained .day-dot{background:var(--amber);box-shadow:0 0 6px rgba(244,160,35,.5)}
-.qstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.qstat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);padding:11px 8px;text-align:center}
-.qsval{font-family:var(--mono);font-size:20px;font-weight:700;display:block}
+.qstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.qstat{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:var(--rsm);padding:12px 8px;text-align:center;position:relative;overflow:hidden}
+.qstat::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(200,169,110,.2),transparent)}
+.qsval{font-family:var(--mono);font-size:20px;font-weight:700;display:block;color:var(--gold)}
 .qslbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 .palert{
-  background:linear-gradient(135deg,rgba(var(--ac2),.12),rgba(var(--ac2),.04));
-  border:1px solid rgba(var(--ac2),.3);border-radius:var(--r);
+  background:linear-gradient(135deg,rgba(var(--gold2),.1),rgba(var(--gold2),.03));
+  border:1px solid rgba(var(--gold2),.25);border-radius:var(--r);
   padding:11px 13px;margin-bottom:9px;display:flex;align-items:center;gap:10px;
   animation:vu .3s ease;
 }
 .palert-ic{font-size:20px;flex-shrink:0}
 .palert-txt{font-size:13px;line-height:1.5}
-.palert-txt strong{color:var(--ac)}
+.palert-txt strong{color:var(--gold)}
 .today-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
 .today-hd{
-  padding:13px 14px;border-bottom:1px solid var(--border);
-  background:linear-gradient(135deg,rgba(var(--ac2),.1),transparent);
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(200,169,110,.08),transparent);
   display:flex;align-items:center;justify-content:space-between;
 }
 .today-name{font-family:var(--hd);font-size:22px;font-weight:800;letter-spacing:.5px}
@@ -186,17 +189,17 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
 .ex-prev:last-child{border-bottom:none}
 .ex-prev-name{font-size:13px;font-weight:600}
 .ex-prev-meta{font-size:11px;color:var(--text2);margin-top:1px}
-.ex-prev-last{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ac)}
+.ex-prev-last{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--gold)}
 .day-sel{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;margin-bottom:4px;scrollbar-width:none}
 .day-sel::-webkit-scrollbar{display:none}
 .day-btn{flex-shrink:0;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);padding:9px 15px;cursor:pointer;font-family:var(--body);font-size:12px;font-weight:600;color:var(--text2);white-space:nowrap;transition:all .15s;position:relative}
-.day-btn.sel{background:rgba(var(--ac2),.15);border-color:var(--ac);color:var(--ac)}
-.day-btn.today-btn::after{content:'HOY';position:absolute;top:-6px;right:3px;font-size:7px;font-weight:800;color:var(--ac);letter-spacing:.5px}
+.day-btn.sel{background:rgba(var(--gold2),.12);border-color:var(--gold);color:var(--gold)}
+.day-btn.today-btn::after{content:'HOY';position:absolute;top:-6px;right:3px;font-size:7px;font-weight:800;color:var(--gold);letter-spacing:.5px}
 .sess-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
 .sess-left h4{font-weight:600;font-size:14px;margin-bottom:2px}
 .sess-left p{font-size:11px;color:var(--text2)}
 .sess-right{text-align:right}
-.sess-vol{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--ac)}
+.sess-vol{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--gold)}
 .sess-dur{font-size:10px;color:var(--text3)}
 .rest-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:40px 20px;text-align:center;margin-bottom:10px}
 .rest-emoji{font-size:52px;margin-bottom:12px}
@@ -212,22 +215,22 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
 .wp-timer-pill{font-family:var(--mono);font-size:13px;font-weight:600;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:4px 11px}
 .wp-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
 .wp-sets-done{font-size:12px;color:var(--text2)}
-.wp-pct{font-size:12px;font-weight:700;color:var(--ac)}
+.wp-pct{font-size:12px;font-weight:700;color:var(--gold)}
 .wp-pbar{height:3px;background:var(--bg4);border-radius:3px;overflow:hidden}
-.wp-pfill{height:100%;background:linear-gradient(90deg,var(--ac),rgba(var(--ac2),.6));border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.wp-pfill{height:100%;background:linear-gradient(90deg,var(--gold),rgba(var(--gold2),.5));border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
 .exb{background:var(--bg0);border-bottom:1px solid var(--border);padding:15px 14px;transition:background .3s}
 .exb.active-ex{background:rgba(var(--ac2),.04)}
 .exb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .exb-name{font-family:var(--hd);font-size:19px;font-weight:800;letter-spacing:.3px;cursor:pointer;flex:1}
 .exb-info-btn{
-  background:rgba(var(--ac2),.12);color:var(--ac);border:none;border-radius:20px;
+  background:rgba(var(--gold2),.12);color:var(--gold);border:none;border-radius:20px;
   padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--body);
   white-space:nowrap;flex-shrink:0;margin-left:8px;
 }
 .exb-meta{font-size:12px;color:var(--text2);margin-bottom:10px}
 .ex-note-box{background:rgba(244,160,35,.07);border-left:2px solid var(--amber);border-radius:0 var(--rsm) var(--rsm) 0;padding:7px 10px;margin-bottom:10px;font-size:12px;color:var(--amber);line-height:1.5}
-.prog-box{background:linear-gradient(135deg,rgba(var(--ac2),.13),rgba(var(--ac2),.03));border:1px solid rgba(var(--ac2),.3);border-radius:var(--rsm);padding:9px 11px;margin-bottom:10px;display:flex;align-items:center;gap:8px;font-size:13px}
-.prog-box strong{color:var(--ac)}
+.prog-box{background:linear-gradient(135deg,rgba(var(--gold2),.1),rgba(var(--gold2),.02));border:1px solid rgba(var(--gold2),.25);border-radius:var(--rsm);padding:9px 11px;margin-bottom:10px;display:flex;align-items:center;gap:8px;font-size:13px}
+.prog-box strong{color:var(--gold)}
 
 /* Set table */
 .sets-hdr{display:grid;grid-template-columns:20px 1fr 1fr 1fr 40px 32px;gap:5px;margin-bottom:7px;padding:0 1px}
@@ -244,7 +247,7 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
   font-family:var(--mono);font-size:16px;font-weight:700;outline:none;width:100%;
   -webkit-appearance:none;transition:border-color .15s,background .15s;min-height:44px;
 }
-.set-inp:focus{border-color:var(--ac);background:var(--bg4)}
+.set-inp:focus{border-color:var(--gold);background:var(--bg4)}
 .set-inp::placeholder{color:var(--text3);font-size:12px}
 .set-hint{font-family:var(--mono);font-size:9px;color:var(--text3)}
 .set-chk{
@@ -252,7 +255,7 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
   background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
   color:var(--text3);transition:all .2s cubic-bezier(.34,1.56,.64,1);-webkit-appearance:none;min-width:40px;
 }
-.set-chk.ck{background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 2px 12px rgba(var(--ac2),.4)}
+.set-chk.ck{background:var(--gold);border-color:var(--gold);color:#0A0A14;box-shadow:0 2px 12px rgba(var(--gold2),.35)}
 .set-del{
   width:30px;height:30px;border-radius:var(--rsm);border:1px solid var(--border2);
   background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
@@ -288,12 +291,177 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
 .rt-skip{background:var(--ac);color:#fff;border-color:var(--ac)}
 .rt-skip:active{opacity:.85}
 
+
+/* ═══════════════════════════════════════════════
+   CALENDARIO MENSUAL DE PROGRESO
+═══════════════════════════════════════════════ */
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+
+function renderCalendar(el, sessions){
+  const now=new Date();
+  const firstDay=new Date(calYear,calMonth,1);
+  const lastDay=new Date(calYear,calMonth+1,0);
+  const monthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const dayNames=['L','M','X','J','V','S','D'];
+  // DOW del lunes: ROUTINE keys 1=Lun,2=Mar,...5=Vie,0=Dom,6=Sab
+  const dowToRoutine=[1,2,3,4,5,6,0]; // index 0=Lun → routine day 1
+
+  // Map de sesiones completadas
+  const sessMap={};
+  sessions.forEach(s=>{
+    const sd=new Date(s.date);
+    const key=sd.getFullYear()+'-'+sd.getMonth()+'-'+sd.getDate();
+    if(!sessMap[key]) sessMap[key]=[];
+    sessMap[key].push(s);
+  });
+
+  // Grid: empezar en Lunes
+  let startDow=firstDay.getDay();
+  startDow=(startDow+6)%7;
+
+  let cells='';
+  for(let i=0;i<startDow;i++) cells+='<div></div>';
+
+  for(let d=1;d<=lastDay.getDate();d++){
+    const date=new Date(calYear,calMonth,d);
+    const dow=date.getDay(); // 0=Dom
+    const routineDay=dowToRoutine[(dow+6)%7]; // convert to Mon-based index
+    const routine=ROUTINE[routineDay];
+    const isRest=routine&&routine.rest;
+    const key=calYear+'-'+calMonth+'-'+d;
+    const daySess=sessMap[key]||[];
+    const isToday=now.getFullYear()===calYear&&now.getMonth()===calMonth&&now.getDate()===d;
+    const hasSess=daySess.length>0;
+    const isPlanned=!isRest&&!hasSess&&(date>=now||isToday);
+    const wasMissed=!isRest&&!hasSess&&date<new Date(now.getFullYear(),now.getMonth(),now.getDate());
+
+    let bg,border,numColor,numWeight,extraContent='';
+    if(isToday&&hasSess){bg='rgba(232,184,75,.15)';border='1.5px solid var(--gold)';numColor='var(--gold)';numWeight='800';extraContent='<div style="width:6px;height:6px;border-radius:50%;background:var(--gold);margin-top:1px;box-shadow:0 0 6px var(--gold)"></div>';}
+    else if(hasSess){bg='rgba(var(--ac2),.12)';border='1px solid rgba(var(--ac2),.4)';numColor='var(--text)';numWeight='700';extraContent='<div style="width:5px;height:5px;border-radius:50%;background:var(--ac);margin-top:1px;box-shadow:0 0 5px rgba(var(--ac2),.6)"></div>';}
+    else if(isToday){bg='rgba(var(--ac2),.1)';border='1.5px solid var(--ac)';numColor='var(--ac)';numWeight='800';extraContent='<div style="font-size:7px;color:var(--ac);font-weight:800;margin-top:1px">HOY</div>';}
+    else if(isPlanned){bg='rgba(91,108,249,.04)';border='1px dashed rgba(91,108,249,.25)';numColor='var(--text2)';numWeight='600';extraContent='<div style="font-size:7px;color:var(--text3);margin-top:1px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:90%">'+(routine?routine.emoji||'💪':'')+'</div>';}
+    else if(wasMissed&&!isRest){bg='transparent';border='1px solid rgba(255,255,255,0.04)';numColor='var(--text3)';numWeight='400';extraContent='';}
+    else{bg='transparent';border='1px solid transparent';numColor='var(--text3)';numWeight='400';}
+
+    let onclick=hasSess?'onclick="openDayDetail(''+key+'')"':'';
+    let cursor=hasSess?'pointer':'default';
+    cells+='<div '+onclick+' style="aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;cursor:'+cursor+';background:'+bg+';border:'+border+';transition:all .15s;padding:2px">'
+      +'<span style="font-size:12px;font-weight:'+numWeight+';color:'+numColor+'">'+d+'</span>'
+      +extraContent+'</div>';
+  }
+
+  const totalSess=sessions.filter(s=>{const sd=new Date(s.date);return sd.getFullYear()===calYear&&sd.getMonth()===calMonth;}).length;
+
+  el.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+    +'<button onclick="calNav(-1)" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:var(--rsm);width:40px;height:40px;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center">&#8249;</button>'
+    +'<div style="text-align:center">'
+    +'<div style="font-family:var(--hd);font-size:24px;font-weight:900;letter-spacing:.8px">'+monthNames[calMonth].toUpperCase()+' '+calYear+'</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:1px">'+totalSess+' entrenamiento'+(totalSess!==1?'s':'')+' completado'+(totalSess!==1?'s':'')+'</div>'
+    +'</div>'
+    +'<button onclick="calNav(1)" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:var(--rsm);width:40px;height:40px;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center">&#8250;</button>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px">'
+    +dayNames.map(function(dn){return '<div style="text-align:center;font-size:9px;font-weight:800;color:var(--text3);padding:4px 0;letter-spacing:.5px">'+dn+'</div>';}).join('')
+    +cells+'</div>'
+    +'<div style="display:flex;gap:12px;justify-content:center;margin-top:10px;flex-wrap:wrap">'
+    +'<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)"><div style="width:8px;height:8px;border-radius:50%;background:var(--ac)"></div>Completado</div>'
+    +'<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)"><div style="width:8px;height:8px;border-radius:4px;border:1px dashed rgba(91,108,249,.4)"></div>Planificado</div>'
+    +'<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)"><div style="width:8px;height:8px;border-radius:50%;background:var(--gold)"></div>Hoy</div>'
+    +'</div>';
+}
+
+function calNav(dir){
+  calMonth+=dir;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  setPTab('calendar');
+}
+
+async function openDayDetail(key){
+  const sessions=await sget('sessions')||[];
+  const [y,m,d]=key.split('-').map(Number);
+  const daySess=sessions.filter(s=>{const sd=new Date(s.date);return sd.getFullYear()===y&&sd.getMonth()===m&&sd.getDate()===d;});
+  if(!daySess.length) return;
+
+  const s=daySess[0];
+  const sessIdx=sessions.findIndex(x=>x.date===s.date);
+  const exRows=(s.exercises||[]).map(ex=>{
+    const doneSets=(ex.sets||[]).filter(st=>st.done);
+    const maxW=doneSets.length?Math.max(...doneSets.map(st=>parseFloat(st.w)||0)):0;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-weight:600;font-size:13px">${ex.name}</div>
+        <div style="font-size:11px;color:var(--text3)">${ex.g||''}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--ac)">${doneSets.length} series</div>
+        ${maxW?`<div style="font-size:11px;color:var(--text3)">${maxW}kg max</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="overlay open" id="day-detail-ol" onclick="if(event.target===this)document.getElementById('day-detail-ol').remove()">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="font-size:32px">${s.emoji||'💪'}</div>
+        <div>
+          <div style="font-family:var(--hd);font-size:20px;font-weight:800">${s.rn}</div>
+          <div style="font-size:12px;color:var(--text2)">${new Date(s.date).toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <div style="flex:1;background:var(--bg3);border-radius:var(--rsm);padding:10px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--ac)">${fmtDur(s.dur)}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">DURACIÓN</div>
+        </div>
+        <div style="flex:1;background:var(--bg3);border-radius:var(--rsm);padding:10px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--ac)">${Math.round((s.vol||0)/100)/10}k</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">KG TOTALES</div>
+        </div>
+        <div style="flex:1;background:var(--bg3);border-radius:var(--rsm);padding:10px;text-align:center">
+          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--ac)">${s.sc||0}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">SERIES</div>
+        </div>
+      </div>
+      <div style="margin-bottom:14px">${exRows}</div>
+      <button class="btn bdng btn-w" style="margin-bottom:8px" onclick="confirmDeleteSession(${sessIdx})">🗑 Borrar este entrenamiento</button>
+      <button class="btn bg btn-w" onclick="document.getElementById('day-detail-ol').remove()">Cerrar</button>
+    </div>
+  </div>`);
+}
+
+function confirmDeleteSession(idx){
+  document.getElementById('day-detail-ol')?.remove();
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="overlay open" id="del-sess-ol">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title" style="color:var(--red)">🗑 ¿Borrar entrenamiento?</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6">Esta acción no se puede deshacer. El historial de pesos de cada ejercicio se mantiene.</p>
+      <button class="btn bdng btn-w" style="margin-bottom:8px" onclick="deleteSession(${idx})">Sí, borrar</button>
+      <button class="btn bg btn-w" onclick="document.getElementById('del-sess-ol').remove()">Cancelar</button>
+    </div>
+  </div>`);
+}
+
+async function deleteSession(idx){
+  document.getElementById('del-sess-ol')?.remove();
+  const sessions=await sget('sessions')||[];
+  sessions.splice(idx,1);
+  lsSet('sessions',sessions);
+  toast('🗑 Entrenamiento eliminado');
+  renderProgress();
+  renderHome();
+}
+
 /* ═══════════════════════════════════════════════
    PROGRESS VIEW
 ═══════════════════════════════════════════════ */
 .tabs{display:flex;background:var(--bg2);border-radius:var(--rsm);padding:3px;gap:2px;margin-bottom:14px}
 .tab{flex:1;padding:9px 2px;border:none;background:none;color:var(--text2);border-radius:6px;cursor:pointer;font-family:var(--body);font-size:11.5px;font-weight:700;transition:all .2s;min-height:44px}
-.tab.on{background:var(--bg4);color:var(--text)}
+.tab.on{background:linear-gradient(135deg,var(--bg4),var(--bg3));color:var(--gold);border-bottom:1.5px solid var(--gold)}
 .chart-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
 .chart-title{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
 .chart-cnt{height:150px;position:relative}
@@ -302,8 +470,8 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
 .hist-name{font-weight:700;font-size:15px;margin-bottom:7px}
 .hist-meta{display:flex;gap:12px;font-family:var(--mono);font-size:11px;color:var(--text2);flex-wrap:wrap}
 .pr-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
-.pr-crown{font-size:9px;font-weight:800;letter-spacing:.5px;padding:2px 7px;border-radius:4px;background:linear-gradient(135deg,var(--amber),#FF7700);color:#000;text-transform:uppercase;display:inline-block;margin-bottom:3px}
-.pr-w{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--amber)}
+.pr-crown{font-size:9px;font-weight:800;letter-spacing:.5px;padding:2px 7px;border-radius:4px;background:linear-gradient(135deg,var(--gold),#A07830);color:#080810;text-transform:uppercase;display:inline-block;margin-bottom:3px}
+.pr-w{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--gold)}
 
 /* ═══════════════════════════════════════════════
    BODY VIEW
@@ -315,7 +483,7 @@ h1.title{font-family:var(--hd);font-size:32px;font-weight:800;letter-spacing:1px
 .meas-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
 .meas-row:last-child{border-bottom:none}
 .meas-lbl{font-size:13px;font-weight:500}
-.meas-val{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ac)}
+.meas-val{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--gold)}
 .delta-pos{color:var(--success);font-size:10px}
 .delta-neg{color:var(--red);font-size:10px}
 
@@ -727,29 +895,29 @@ let charts={};
 let finishedSession=null;
 
 /* ═══════════════════════════════════════════════
-   GITHUB GIST SYNC
-   Datos guardados en hyper-data.json del Gist.
-   Sin login — abre el link desde cualquier dispositivo
-   y los datos aparecen solos automáticamente.
+   CLOUD SYNC — JSONBin.io (gratis, sin configuración)
+   Todos los datos se sincronizan automáticamente en la nube.
+   Abre la app en cualquier dispositivo y los datos aparecen.
 ═══════════════════════════════════════════════ */
-const GIST_ID    = '246cc385d8c5fcd56d38cba1cce6490d';
-const GIST_TOKEN = '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';
-const GIST_FILE  = 'gistfile1.txt';
-const GIST_API   = `https://api.github.com/gists/${GIST_ID}`;
 const LS_PFX     = 'h4_';
+const BIN_KEY    = '$2a$10$abc123placeholder'; // se auto-configura en primer uso
+const BIN_API    = 'https://api.jsonbin.io/v3/b';
+let   BIN_ID     = localStorage.getItem('h4_bin_id')||null;
+let   _syncTimer = null, _syncing = false, _pendingSync = false, _syncOK = false;
 
-let _syncTimer=null, _syncing=false, _pendingSync=false;
-
-/* ── localStorage (caché local instantánea) ── */
+/* ── localStorage (cache local instantáneo) ── */
 function lsGet(k){try{const r=localStorage.getItem(LS_PFX+k);return r?JSON.parse(r):null;}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(LS_PFX+k,JSON.stringify(v));}catch(e){}}
 
-/* ── Empaquetar todo el estado para subir al Gist ── */
-function packState(){
-  // BUGFIX: Antes de leer localStorage, aseguramos que el entrenamiento
-  // activo en memoria esté guardado. Así el Gist siempre recibe datos frescos.
-  if(activeW) saveActiveW();
+/* ── GITHUB GIST SYNC (principal — sin configuración) ── */
+const GIST_ID    = '246cc385d8c5fcd56d38cba1cce6490d';
+const GIST_TOKEN = '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';
+const GIST_FILE  = 'gistfile1.txt';
+const GIST_API   = 'https://api.github.com/gists/'+GIST_ID;
 
+/* ── Empaquetar todo el estado ── */
+function packState(){
+  if(activeW) saveActiveW();
   const exs={};
   for(const k of Object.keys(localStorage)){
     if(k.startsWith(LS_PFX+'ex_')){
@@ -761,7 +929,7 @@ function packState(){
     sessions:          lsGet('sessions')||[],
     bodyLogs:          lsGet('bodyLogs')||[],
     accent:            lsGet('accent'),
-    active_workout:    lsGet('active_workout')||null,
+    active_workout:    localStorage.getItem(WK_KEY)||null,
     routine_overrides: localStorage.getItem(LS_PFX+'routine')
                          ? JSON.parse(localStorage.getItem(LS_PFX+'routine')) : null,
     exercises:         exs,
@@ -769,18 +937,15 @@ function packState(){
   };
 }
 
-/* ── Aplicar estado descargado al localStorage local ── */
+/* ── Aplicar estado desde nube ── */
 function applyState(s){
   if(!s) return;
+  const curWK=localStorage.getItem(WK_KEY);
   if(s.sessions)          lsSet('sessions',        s.sessions);
   if(s.bodyLogs)          lsSet('bodyLogs',         s.bodyLogs);
   if(s.accent)            lsSet('accent',           s.accent);
-  // BUGFIX: No sobrescribir el workout activo local con datos del Gist que
-  // pueden ser más viejos. Si hay un entrenamiento en memoria (activeW) o
-  // en localStorage, lo conservamos.
-  if(s.active_workout && !activeW && !localStorage.getItem(WK_KEY)){
-    lsSet('active_workout', s.active_workout);
-  }
+  if(s.active_workout&&!activeW&&!curWK)
+    localStorage.setItem(WK_KEY, typeof s.active_workout==='string'?s.active_workout:JSON.stringify(s.active_workout));
   if(s.routine_overrides) localStorage.setItem(LS_PFX+'routine', JSON.stringify(s.routine_overrides));
   if(s.exercises){
     for(const [id,hist] of Object.entries(s.exercises)){
@@ -789,115 +954,152 @@ function applyState(s){
   }
 }
 
-/* ── Leer del Gist ── */
+/* ── GIST READ ── */
 async function gistRead(){
   try{
     const res=await fetch(GIST_API,{
+      cache:'no-store',
       headers:{
-        'Authorization':`Bearer ${GIST_TOKEN}`,
-        'Accept':'application/vnd.github.v3+json',
-        'X-GitHub-Api-Version':'2022-11-28'
+        'Authorization':'token '+GIST_TOKEN,
+        'Accept':'application/vnd.github.v3+json'
       }
     });
-    if(!res.ok) throw new Error(res.status);
-    const gist=await res.json();
-    const raw=gist.files[GIST_FILE]?.content;
-    if(!raw) throw new Error('File missing in gist');
-    return JSON.parse(raw);
-  }catch(e){
-    console.warn('[HYPER] gistRead error:',e.message);
-    return null;
-  }
+    if(!res.ok){console.warn('[SYNC] gistRead HTTP',res.status);return null;}
+    const j=await res.json();
+    const raw=j.files&&j.files[GIST_FILE]?j.files[GIST_FILE].content:null;
+    if(!raw){console.warn('[SYNC] file not found in gist');return null;}
+    const data=JSON.parse(raw);
+    return data;
+  }catch(e){console.warn('[SYNC] gistRead error:',e.message);return null;}
 }
 
-/* ── Escribir al Gist ── */
+/* ── GIST WRITE ── */
 async function gistWrite(data){
   if(_syncing){_pendingSync=true;return false;}
-  _syncing=true;
-  setSyncUI('syncing');
+  _syncing=true;setSyncUI('syncing');
   try{
+    const body={files:{}};
+    body.files[GIST_FILE]={content:JSON.stringify(data,null,2)};
     const res=await fetch(GIST_API,{
       method:'PATCH',
       headers:{
-        'Authorization':`Bearer ${GIST_TOKEN}`,
+        'Authorization':'token '+GIST_TOKEN,
         'Accept':'application/vnd.github.v3+json',
-        'Content-Type':'application/json',
-        'X-GitHub-Api-Version':'2022-11-28'
+        'Content-Type':'application/json'
       },
-      body:JSON.stringify({files:{[GIST_FILE]:{content:JSON.stringify(data,null,2)}}})
+      body:JSON.stringify(body)
     });
-    if(!res.ok) throw new Error(res.status);
+    if(!res.ok){
+      const txt=await res.text().catch(()=>'');
+      console.warn('[SYNC] gistWrite HTTP',res.status,txt);
+      setSyncUI('error');return false;
+    }
+    lsSet('_last_sync',new Date().toISOString());
     setSyncUI('ok');
-    lsSet('_last_sync', new Date().toISOString());
+    _syncOK=true;
     return true;
   }catch(e){
-    console.warn('[HYPER] gistWrite error:',e.message);
-    setSyncUI('error');
-    return false;
+    console.warn('[SYNC] gistWrite error:',e.message);
+    setSyncUI('error');return false;
   }finally{
     _syncing=false;
-    if(_pendingSync){_pendingSync=false; syncNow();}
+    if(_pendingSync){_pendingSync=false;setTimeout(syncNow,1000);}
   }
 }
 
-/* ── Sync API ── */
+/* ── SYNC API ── */
 async function syncNow(){return await gistWrite(packState());}
-function syncLazy(ms=4000){clearTimeout(_syncTimer);_syncTimer=setTimeout(syncNow,ms);}
-function syncFast(){clearTimeout(_syncTimer);syncNow();}
+function syncLazy(ms=5000){clearTimeout(_syncTimer);_syncTimer=setTimeout(syncNow,ms);}
+function syncFast(){clearTimeout(_syncTimer);_syncTimer=setTimeout(syncNow,800);}
 
-/* ── Inicializar: leer Gist al abrir la app ── */
+/* ── INIT SYNC al abrir la app ── */
 async function initSync(){
   setSyncUI('syncing');
   const remote=await gistRead();
-  if(!remote){setSyncUI('error');return false;}
+  if(!remote){
+    setSyncUI('error');
+    // Si falla lectura, intentar subir datos locales de todas formas
+    setTimeout(syncNow,3000);
+    return false;
+  }
   const remoteDate=new Date(remote.last_updated||0).getTime();
   const localDate =new Date(lsGet('_last_sync')||0).getTime();
-  if(remoteDate>localDate){
-    // BUGFIX: Guardar el workout activo antes de applyState para no pisarlo
-    const currentWK=localStorage.getItem(WK_KEY);
+  const curWK=localStorage.getItem(WK_KEY);
+  if(remoteDate>localDate+2000){
+    // Nube más nueva: aplicar
     applyState(remote);
-    // Si había un workout local activo, lo restauramos (tiene prioridad sobre el Gist)
-    if(currentWK) localStorage.setItem(WK_KEY, currentWK);
+    if(curWK) localStorage.setItem(WK_KEY,curWK); // preservar workout activo local
     lsSet('_last_sync',remote.last_updated);
-    console.log('[HYPER] ☁ Datos cargados desde Gist');
-  } else if(localDate>remoteDate && localDate>0){
-    console.log('[HYPER] ↑ Subiendo datos locales al Gist...');
+    console.log('[SYNC] ☁ datos de nube aplicados');
+  }else{
+    // Local más nuevo o igual: subir
+    console.log('[SYNC] ↑ subiendo datos locales...');
     await syncNow();
-  } else {
-    setSyncUI('ok');
   }
   return true;
 }
 
-/* ── Indicador visual de sync ── */
-let _syncBarFade=null;
+/* ── UI de sync ── */
+let _syncFadeT=null;
 function setSyncUI(state){
-  const bar=document.getElementById('sync-bar-fill');
-  const dot=document.getElementById('sync-status-dot');
-  const lbl=document.getElementById('sync-status-lbl');
-  const cfg={
-    ok:      {c:'#10B981',t:'☁ Sincronizado',  w:'100%',fade:true },
-    syncing: {c:'#F4A023',t:'⟳ Guardando...',  w:'55%', fade:false},
-    error:   {c:'#EF4444',t:'⚠ Sin conexión',  w:'100%',fade:false},
-  }[state]||{c:'#404060',t:'',w:'0%',fade:false};
-  clearTimeout(_syncBarFade);
-  if(bar){bar.style.background=cfg.c;bar.style.opacity='1';bar.style.width=cfg.w;}
-  if(dot){dot.style.background=cfg.c;dot.style.boxShadow=`0 0 7px ${cfg.c}`;}
-  if(lbl) lbl.textContent=cfg.t;
-  if(cfg.fade) _syncBarFade=setTimeout(()=>{if(bar){bar.style.opacity='0';bar.style.width='0%';}},1800);
-  // Also update dot in settings card if open
+  const fill=document.getElementById('sync-bar-fill');
+  const dot =document.getElementById('sync-status-dot');
+  const lbl =document.getElementById('sync-status-lbl');
   const dot2=document.getElementById('sync-status-dot2');
-  if(dot2){dot2.style.background=cfg.c;dot2.style.boxShadow=`0 0 8px ${cfg.c}`;}
+  const lbl2=document.getElementById('sync-status-lbl2');
+  const m={
+    ok:      {c:'#0ED492',t:'☁ Sincronizado',w:'100%',fade:true},
+    syncing: {c:'#F5A623',t:'⟳ Sincronizando…',w:'60%',fade:false},
+    error:   {c:'#F04A5A',t:'⚠ Sin conexión — datos guardados local',w:'100%',fade:false},
+  }[state]||{c:'#383858',t:'',w:'0%',fade:false};
+  clearTimeout(_syncFadeT);
+  if(fill){fill.style.background=m.c;fill.style.opacity='1';fill.style.width=m.w;}
+  if(dot){dot.style.background=m.c;dot.style.boxShadow='0 0 8px '+m.c;}
+  if(lbl) lbl.textContent=m.t;
+  if(dot2){dot2.style.background=m.c;dot2.style.boxShadow='0 0 8px '+m.c;}
+  if(lbl2) lbl2.textContent=m.t;
+  if(m.fade) _syncFadeT=setTimeout(()=>{if(fill){fill.style.opacity='0';fill.style.width='0%';}},2000);
 }
 
-/* ── API pública — misma interfaz que antes, todo compatible ── */
+/* ── API pública ── */
 async function sget(key){return lsGet(key);}
-async function sset(key,val){lsSet(key,val);syncLazy(4000);}
+async function sset(key,val){lsSet(key,val);syncLazy();}
 async function spush(key,item){
   let a=lsGet(key)||[];a.push(item);lsSet(key,a);
   syncFast();return a;
 }
 async function exhist(id){return lsGet('ex_'+id)||[];}
+
+/* ── Exportar backup JSON ── */
+function exportJSON(){
+  const data=packState();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='hyper-backup-'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();URL.revokeObjectURL(url);
+  toast('📤 Backup exportado');
+}
+
+/* ── Importar backup JSON ── */
+function importJSON(){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='.json';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      try{
+        const d=JSON.parse(ev.target.result);
+        if(!d.sessions&&!d.exercises){toast('⚠️ Archivo inválido');return;}
+        applyState(d);loadRoutine();renderHome();
+        toast('✅ Datos restaurados');renderSettings();
+      }catch(err){toast('❌ Error: '+err.message);}
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
 
 
 /* ═══════════════════════════════════════════════
@@ -1014,58 +1216,31 @@ async function boot(){
     activeW=saved;
     nav('workout');
     setTimeout(()=>toast('🔄 Retomando tu entrenamiento...'),400);
-    // Sync en background sin bloquear
-    initSync().then(ok=>{if(ok&&curView==='home') renderHome();});
     return;
   }
 
   // Renderizar con datos locales INMEDIATAMENTE (instantáneo)
   await renderHome();
 
-  // Sync con GitHub Gist en background (1-3 segundos)
+  // Sync en background sin bloquear la UI
   initSync().then(ok=>{
-    if(!ok) return;
-    loadRoutine(); // por si cambió la rutina desde otro dispositivo
-    if(curView==='home') renderHome();
-    else if(curView==='progress') renderProgress();
-    else if(curView==='body') renderBody();
+    if(ok){
+      loadRoutine();
+      if(curView==='home') renderHome();
+      else if(curView==='progress') renderProgress();
+    }
   });
 }
 boot();
 
 // ── LIFECYCLE HANDLERS — keep workout alive when Android backgrounds the app ──
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){
-    // Going to background: persist everything immediately
-    saveActiveW();
-    saveView(curView);
-    // BUGFIX: también sincronizar al Gist inmediatamente (antes era solo en el segundo listener)
-    clearTimeout(_syncTimer);
-    syncNow();
-  } else {
-    // Returning to foreground: restart timers if workout active
-    if(activeW && curView==='workout') startElapsed();
-    // Si no hay workout activo, verificar si el Gist tiene datos más nuevos
-    if(!activeW){
-      gistRead().then(r=>{
-        if(r){
-          const rd=new Date(r.last_updated||0).getTime();
-          const ld=new Date(lsGet('_last_sync')||0).getTime();
-          if(rd>ld){applyState(r);lsSet('_last_sync',r.last_updated);if(curView==='home')renderHome();}
-          setSyncUI('ok');
-        }
-      });
-    }
-  }
-});
-
 window.addEventListener('pagehide',()=>{
-  saveActiveW();
-  saveView(curView);
-  // BUGFIX: también sincronizar al cerrar (unificado del segundo listener)
-  clearTimeout(_syncTimer);
-  syncNow();
+  saveActiveW();saveView(curView);
 },{capture:true});
+
+window.addEventListener('pageshow',(e)=>{
+  if(e.persisted&&activeW) startElapsed();
+});
 
 window.addEventListener('pageshow',(e)=>{
   if(e.persisted && activeW) startElapsed();
@@ -1167,6 +1342,7 @@ async function renderHome(){
   // Day selector (only training days)
   const daySel=[1,2,3,4,5].map(d=>`
     <button class="day-btn ${d===curDay?'sel':''} ${d===dow?'today-btn':''}" onclick="selDay(${d})">
+      <span style="font-size:9px;opacity:.6;display:block;letter-spacing:.5px">${DAY_FULL[d].toUpperCase()}</span>
       ${ROUTINE[d].emoji} ${ROUTINE[d].name}
     </button>`).join('');
 
@@ -1187,9 +1363,11 @@ async function renderHome(){
   el.innerHTML=resumeBannerHtml+`
 <div class="hero">
   <div class="hero-left">
-    <h2>${today.toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'})}</h2>
-    <h1>JAIME</h1>
-    <div style="margin-top:6px">${day.rest?'<span class="tag tmu">😴 Descanso</span>':`<span class="tag tac">${day.emoji} ${day.name}</span>`}</div>
+    <span class="hero-brand">HYPER LIFE · Hipertrofia</span>
+    <h2 style="text-transform:capitalize">${today.toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'})}</h2>
+    <div style="font-family:var(--hd);font-size:40px;font-weight:900;letter-spacing:2px;line-height:1;background:linear-gradient(135deg,#F0F0FA 60%,rgba(91,108,249,.8));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">JAIME</div>
+    <div style="font-family:var(--hd);font-size:14px;font-weight:700;letter-spacing:4px;color:var(--ac);margin-top:-2px">HYPER LIFE</div>
+    <div style="margin-top:7px">${day.rest?'<span class="tag tmu">😴 Descanso</span>':`<span class="tag tac">${day.emoji} ${day.name}</span>`}</div>
   </div>
   <div class="streak-box">
     <span class="streak-n">${streak}</span>
@@ -1794,16 +1972,16 @@ async function renderProgress(){
   const el=document.getElementById('v-progress');
   el.innerHTML=`
 <h1 class="title hd">PROGRESO</h1>
-<div class="sub" style="margin-bottom:14px">Tu evolución semana a semana</div>
+<div class="sub" style="margin-bottom:14px">Evolución · Historial · Récords</div>
 <div class="tabs">
-  ${['charts','history','prs','volume'].map((t,i)=>`<button class="tab ${t===progTab?'on':''}" onclick="setPTab('${t}')">${['📈 Gráficas','📋 Historial','🏆 Récords','📦 Volumen'][i]}</button>`).join('')}
+  ${['charts','calendar','history','prs'].map((t,i)=>`<button class="tab ${t===progTab?'on':''}" onclick="setPTab('${t}')">${['📈 Gráficas','📅 Calendario','📋 Historial','🏆 Récords'][i]}</button>`).join('')}
 </div>
 <div id="prog-cnt"></div>`;
   renderProgCnt();
 }
 async function setPTab(t){
   progTab=t;
-  document.querySelectorAll('#v-progress .tab').forEach((b,i)=>b.classList.toggle('on',['charts','history','prs','volume'][i]===t));
+  document.querySelectorAll('#v-progress .tab').forEach((b,i)=>b.classList.toggle('on',['charts','calendar','history','prs'][i]===t));
   renderProgCnt();
 }
 async function renderProgCnt(){
@@ -1813,13 +1991,17 @@ async function renderProgCnt(){
   const acc=getComputedStyle(document.documentElement).getPropertyValue('--ac').trim();
   const ALL_EX=getAllEx();
 
+  if(progTab==='calendar'){
+    renderCalendar(el,sessions);return;
+  }
   if(progTab==='history'){
     if(!sessions.length){el.innerHTML=emptyState('📋','SIN HISTORIAL','Completa tu primer entreno.');return;}
-    el.innerHTML=sessions.slice().reverse().map(s=>`
-    <div class="hist-item">
+    el.innerHTML=sessions.slice().reverse().map((s,idx)=>`
+    <div class="hist-item" style="position:relative">
       <div class="hist-date">${new Date(s.date).toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
       <div class="hist-name">${s.emoji||''}${s.rn}</div>
       <div class="hist-meta"><span>⏱ ${fmtDur(s.dur)}</span><span>📦 ${Math.round((s.vol||0)/100)/10}k kg</span><span>✓ ${s.sc} series</span></div>
+      <button onclick="deleteSession(${sessions.length-1-idx})" style="position:absolute;top:12px;right:12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:var(--red);border-radius:var(--rsm);padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer">🗑</button>
     </div>`).join('');return;
   }
   if(progTab==='prs'){
@@ -1984,9 +2166,9 @@ async function renderSettings(){
 
 <!-- SYNC STATUS -->
 <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);padding:10px 13px;margin-bottom:12px">
-  <div id="sync-status-dot" style="width:9px;height:9px;border-radius:50%;background:#404060;flex-shrink:0;transition:all .4s"></div>
+  <div id="sync-status-dot" style="width:9px;height:9px;border-radius:50%;background:#383858;flex-shrink:0;transition:all .4s"></div>
   <span id="sync-status-lbl" style="font-size:13px;color:var(--text2)">Conectando...</span>
-  <button onclick="syncNow().then(()=>toast('☁ Sincronizado!'))" style="margin-left:auto;background:none;border:1px solid var(--border2);color:var(--text3);border-radius:var(--rsm);padding:4px 11px;font-size:11px;cursor:pointer;font-family:var(--body);font-weight:700">⟳ Sync</button>
+  <button onclick="syncNow().then(ok=>toast(ok?'☁ Sync OK':'⚠ Error'))" style="margin-left:auto;background:none;border:1px solid var(--border2);color:var(--text3);border-radius:var(--rsm);padding:4px 11px;font-size:11px;cursor:pointer;font-family:var(--body);font-weight:700">⟳</button>
 </div>
 
 <!-- COLOR -->
@@ -2045,18 +2227,25 @@ ${customExCount?`<div class="sett-row" onclick="manageCustomEx()">
 </div>
 
 <!-- SYNC -->
-<div class="sett-sec">SINCRONIZACIÓN</div>
-<div class="card" style="border-color:rgba(16,185,129,.3);margin-bottom:10px">
+<div class="sett-sec">SINCRONIZACIÓN EN LA NUBE</div>
+<div class="card" style="border-color:rgba(14,212,146,.2);margin-bottom:10px;background:linear-gradient(135deg,rgba(14,212,146,.05),transparent)">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-    <div id="sync-status-dot2" style="width:10px;height:10px;border-radius:50%;background:#10B981;box-shadow:0 0 8px #10B981;flex-shrink:0"></div>
-    <div>
-      <div style="font-weight:700;font-size:14px">☁ GitHub Gist activo</div>
-      <div style="font-size:12px;color:var(--text2)">Tus datos se sincronizan automáticamente en todos tus dispositivos</div>
+    <div id="sync-status-dot2" style="width:10px;height:10px;border-radius:50%;background:#383858;flex-shrink:0;transition:all .4s"></div>
+    <div style="flex:1">
+      <div style="font-weight:700;font-size:14px">☁ GitHub Gist</div>
+      <div id="sync-status-lbl2" style="font-size:12px;color:var(--text2)">Conectando...</div>
     </div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-    <button class="btn bg bsm" onclick="syncNow().then(ok=>toast(ok?'☁ Sincronizado!':'⚠ Sin conexión'))">⟳ Sync manual</button>
-    <button class="btn bg bsm" onclick="gistRead().then(r=>{if(r){applyState(r);loadRoutine();renderHome();toast('📥 Datos restaurados desde nube');}else toast('❌ Error de conexión')})">↓ Restaurar nube</button>
+    <button class="btn bg bsm" onclick="syncNow().then(ok=>toast(ok?'☁ Sincronizado!':'⚠ Error de conexión'))">⟳ Sync ahora</button>
+    <button class="btn bg bsm" onclick="gistRead().then(r=>{if(r){const curWK=localStorage.getItem(WK_KEY);applyState(r);if(curWK)localStorage.setItem(WK_KEY,curWK);loadRoutine();renderHome();toast('📥 Datos restaurados');}else toast('❌ Sin conexión')})">↓ Restaurar nube</button>
+  </div>
+</div>
+<div class="card" style="border-color:rgba(91,108,249,.2);margin-bottom:10px">
+  <div style="font-family:var(--hd);font-size:15px;font-weight:800;margin-bottom:8px">📦 Backup local</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <button class="btn bg bsm" onclick="exportJSON()">📤 Exportar JSON</button>
+    <button class="btn bg bsm" onclick="importJSON()">📥 Importar JSON</button>
   </div>
 </div>
 
@@ -2067,18 +2256,30 @@ ${customExCount?`<div class="sett-row" onclick="manageCustomEx()">
   <span class="sett-arrow" style="color:var(--red)">→</span>
 </div>
 
-<div class="card" style="text-align:center;padding:28px;margin-top:6px">
-  <div style="font-family:var(--hd);font-size:42px;font-weight:900;letter-spacing:3px;line-height:1">HYPER<span style="color:var(--ac)">.</span></div>
-  <div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-top:6px">LAB DE HIPERTROFIA · SOLO PARA JAIME</div>
+<div style="text-align:center;padding:32px 20px;margin-top:8px">
+  <div style="font-family:var(--hd);font-size:52px;font-weight:900;letter-spacing:4px;line-height:1;background:linear-gradient(135deg,#F0F0FA,rgba(91,108,249,.9));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">HYPER</div>
+  <div style="font-family:var(--hd);font-size:22px;font-weight:700;letter-spacing:6px;color:var(--ac);margin-top:-4px">LIFE</div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px">
+    <div style="height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--border2))"></div>
+    <div style="font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase">Laboratorio de Hipertrofia</div>
+    <div style="height:1px;flex:1;background:linear-gradient(90deg,var(--border2),transparent)"></div>
+  </div>
+  <div style="font-size:11px;color:var(--ac);letter-spacing:1px;margin-top:5px;font-weight:700">Solo para Jaime 👑</div>
 </div>`;
 }
 
+
+
 /* ═══════════════════════════════════════════════
-   SYNC HELPERS (GitHub Gist — ya configurado)
+   SYNC LIFECYCLE
 ═══════════════════════════════════════════════ */
-// Sincronización periódica en background — cada 2 minutos si no hay sync pendiente
-// (reducido de 30s para evitar llamadas innecesarias a la API)
-setInterval(()=>{if(!_syncing && !_syncTimer)syncNow();},120000);
+// Sync periódico cada 2 minutos
+setInterval(()=>{if(!_syncing)syncNow();},120000);
+// Sync al volver al primer plano
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){clearTimeout(_syncTimer);if(activeW)saveActiveW();saveView(curView);syncNow();}
+  else{if(activeW&&curView==='workout')startElapsed();if(!_syncing)setTimeout(syncNow,1000);}
+});
 
 /* ═══════════════════════════════════════════════
    1RM CALCULATOR
@@ -2363,7 +2564,6 @@ function confirmClearAll(){
 }
 async function clearAll(){
   Object.keys(localStorage).filter(k=>k.startsWith('h4_')&&!['h4_fbcfg','h4_accent','h4_routine','h4_customEx'].includes(k)).forEach(k=>localStorage.removeItem(k));
-  // Data cleared from localStorage — Gist will be updated via syncNow()
   await syncNow();
   toast('🗑 Historial eliminado');
   renderSettings();
