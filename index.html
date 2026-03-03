@@ -21,7 +21,7 @@
   --ac:#C9AA72; --ac2:201,170,114;
   --bg0:#06060F; --bg1:#09091A; --bg2:#0D0D1E; --bg3:#121228; --bg4:#1A1A35;
   --border:rgba(255,255,255,0.05); --border2:rgba(255,255,255,0.09);
-  --text:#F0F0FF; --text2:#5A5A90; --text3:#2E2E55;
+  --text:#F0F0FF; --text2:#7878B0; --text3:#4A4A75;
   --gold:#C9AA72; --gold2:201,170,114;
   --red:#E8455A; --success:#0ECFA0; --purple:#9B79F0; --amber:#F4A023;
   --mono:'JetBrains Mono',monospace; --body:'Outfit',sans-serif;
@@ -92,7 +92,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 .ni{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:3px;background:none;border:none;color:var(--text3);cursor:pointer;
-  font-family:var(--hd2);font-size:8px;font-weight:700;letter-spacing:1.2px;
+  font-family:var(--hd2);font-size:9px;font-weight:700;letter-spacing:.8px;
   text-transform:uppercase;transition:color .18s;position:relative;padding:0;min-width:44px;min-height:44px;
 }
 .ni.on{color:var(--ac)}
@@ -1373,7 +1373,7 @@ ${resumeBanner}
 
 <!-- HL BRAND HERO (nuevo, reemplaza "JAIME") -->
 <div class="hl-brand-hero">
-  <div class="hl-logo-main">HYPER<br>LIFE</div>
+  <div class="hl-logo-main"><svg width="70" height="50" viewBox="0 0 70 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 6px;display:block;filter:drop-shadow(0 0 15px rgba(201,170,114,.6))"><rect x="10" y="21" width="50" height="8" rx="4" fill="url(#dg1)"/><rect x="2" y="16" width="12" height="18" rx="6" fill="url(#dg1)"/><rect x="56" y="16" width="12" height="18" rx="6" fill="url(#dg1)"/><rect x="14" y="19" width="6" height="12" rx="3" fill="url(#dg2)"/><rect x="50" y="19" width="6" height="12" rx="3" fill="url(#dg2)"/><defs><linearGradient id="dg1" x1="0" y1="0" x2="70" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#F5F0E0"/><stop offset="0.5" stop-color="#C9AA72"/><stop offset="1" stop-color="#7A5A20"/></linearGradient><linearGradient id="dg2" x1="0" y1="0" x2="70" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#D4B96A"/><stop offset="1" stop-color="#5A3E10"/></linearGradient></defs></svg>HYPER<br>LIFE</div>
   <div class="hl-logo-sub">Laboratorio de Hipertrofia</div>
   <div class="hl-logo-line">
     <div class="hl-logo-dot"></div>
@@ -1645,7 +1645,7 @@ function startRT(secs,cb){
   stopRT();rtSecs=secs;rtEndCb=cb||null;swNotify(secs*1000);
   document.getElementById('rtimer').classList.remove('hidden');
   updRT();
-  rtIval=setInterval(()=>{rtSecs--;updRT();if(rtSecs<=0){try{if(Notification.permission==='granted'){new Notification('⏱ HYPER LIFE',{body:'¡Descanso terminado! A por la siguiente serie.',tag:'rest',renotify:true,silent:false});}else if(Notification.permission!=='denied'){Notification.requestPermission().then(p=>{if(p==='granted')new Notification('⏱ HYPER LIFE',{body:'¡Descanso terminado! A por la siguiente serie.',tag:'rest',renotify:true});});}}catch(e){}stopRT();let lateSecs=0;const lbl=document.querySelector('.rt-lbl');const cnt=document.querySelector('.rt-cnt');if(cnt){cnt.style.color='var(--red)';cnt.textContent='+0s';}if(lbl)lbl.textContent='ATRASADO ⚠️';document.getElementById('rtimer').classList.remove('hidden');clearInterval(window._lateIval);window._lateIval=setInterval(()=>{lateSecs++;if(cnt)cnt.textContent='+'+(lateSecs<60?lateSecs+'s':Math.floor(lateSecs/60)+'m'+String(lateSecs%60).padStart(2,'0')+'s');},1000);if(rtEndCb)rtEndCb();}},1000);
+  rtIval=setInterval(()=>{rtSecs--;updRT();if(rtSecs<=0){try{if(Notification.permission==='granted'){new Notification('⏱ HYPER LIFE',{body:'¡Descanso terminado! A por la siguiente serie.',tag:'rest',renotify:true,silent:false});}else if(Notification.permission!=='denied'){Notification.requestPermission().then(p=>{if(p==='granted')new Notification('⏱ HYPER LIFE',{body:'¡Descanso terminado! A por la siguiente serie.',tag:'rest',renotify:true});});}}catch(e){}stopRT();let lateSecs=0;const lbl=document.querySelector('.rt-lbl');const cnt=document.querySelector('.rt-cnt');if(cnt){cnt.style.color='var(--red)';cnt.textContent='+0s';}if(lbl)try{if(window._swReg&&window._swReg.active)window._swReg.active.postMessage({type:'SCHEDULE_TIMER',id:'late',delay:0,title:'⏰ HYPER LIFE',body:'\u00a1Empieza ya la serie! Llevas retraso.'});}catch(e){}lbl.textContent='ATRASADO ⚠️';document.getElementById('rtimer').classList.remove('hidden');clearInterval(window._lateIval);window._lateIval=setInterval(()=>{lateSecs++;if(cnt)cnt.textContent='+'+(lateSecs<60?lateSecs+'s':Math.floor(lateSecs/60)+'m'+String(lateSecs%60).padStart(2,'0')+'s');},1000);if(rtEndCb)rtEndCb();}},1000);
 }
 function updRT(){
   const d=document.getElementById('rtdisp');
@@ -2331,7 +2331,7 @@ ${customExCount?`<div class="sett-row" onclick="manageCustomEx()">
 <!-- FOOTER BRAND -->
 <div style="text-align:center;padding:44px 20px;margin-top:8px;position:relative">
   <div style="position:absolute;top:24px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--gold2),.15),transparent)"></div>
-  <div style="font-family:var(--hd);font-size:60px;letter-spacing:6px;line-height:0.9;background:linear-gradient(135deg,rgba(201,170,114,.4),rgba(201,170,114,.15));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">HYPER<br>LIFE</div>
+  <div style="font-family:var(--hd);font-size:60px;letter-spacing:6px;line-height:0.9;background:linear-gradient(135deg,rgba(201,170,114,.4),rgba(201,170,114,.15));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text"><svg width="70" height="50" viewBox="0 0 70 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 6px;display:block;filter:drop-shadow(0 0 15px rgba(201,170,114,.6))"><rect x="10" y="21" width="50" height="8" rx="4" fill="url(#dg1)"/><rect x="2" y="16" width="12" height="18" rx="6" fill="url(#dg1)"/><rect x="56" y="16" width="12" height="18" rx="6" fill="url(#dg1)"/><rect x="14" y="19" width="6" height="12" rx="3" fill="url(#dg2)"/><rect x="50" y="19" width="6" height="12" rx="3" fill="url(#dg2)"/><defs><linearGradient id="dg1" x1="0" y1="0" x2="70" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#F5F0E0"/><stop offset="0.5" stop-color="#C9AA72"/><stop offset="1" stop-color="#7A5A20"/></linearGradient><linearGradient id="dg2" x1="0" y1="0" x2="70" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#D4B96A"/><stop offset="1" stop-color="#5A3E10"/></linearGradient></defs></svg>HYPER<br>LIFE</div>
   <div style="font-family:var(--hd2);font-size:9px;letter-spacing:4px;color:var(--text3);margin-top:8px;text-transform:uppercase">Laboratorio de Hipertrofia · Solo para Jaime 👑</div>
 </div>`;
 }
