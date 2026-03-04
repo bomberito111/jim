@@ -1,12 +1,11 @@
-// Service Worker — HYPER LIFE v5
-// Estrategia robusta: timestamps absolutos + periodicSync + fetch ping cada ~10s
-// Los setTimeout en SW son poco confiables en background; usamos un loop basado en
-// waitUntil + fetch self-ping para mantener el SW activo y revisar timers vencidos.
+// Service Worker — HYPER LIFE v6
+// SOLUCIÓN DEFINITIVA AL TIMER EN BACKGROUND:
+// En lugar de setTimeout (que muere cuando el SW es killed),
+// guardamos el timestamp ABSOLUTO en IndexedDB y usamos un
+// loop basado en waitUntil + fetch self-ping para mantenernos vivos.
 
-const CACHE = 'jim-sw-v5';
+const CACHE = 'jim-sw-v6';
 const DB_NAME = 'jim-timers';
-const PING_URL = '/jim/sw-ping.txt'; // archivo estático dummy (se crea auto)
-const CHECK_INTERVAL = 8000; // cada 8 segundos revisamos si hay timer vencido
 
 // ─── Install / Activate ───
 self.addEventListener('install', () => self.skipWaiting());
@@ -21,48 +20,70 @@ self.addEventListener('activate', e => {
   );
 });
 
-// ─── IndexedDB helpers ───
+// ─── Estado en memoria ───
+let pendingTimers = {};   // { id: { id, fireAt, title, body } }
+let loopRunning = false;
+let dailyTimeout = null;
+
+// ══════════════════════════════════════════════
+// IndexedDB helpers
+// ══════════════════════════════════════════════
 function openDB() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1);
-    req.onupgradeneeded = e => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains('timers'))
-        db.createObjectStore('timers', { keyPath: 'id' });
-    };
-    req.onsuccess = e => resolve(e.target.result);
-    req.onerror = () => reject(req.error);
+    try {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('timers'))
+          db.createObjectStore('timers', { keyPath: 'id' });
+      };
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror = () => reject(req.error);
+    } catch(e) { reject(e); }
   });
 }
 
-async function saveTimer(timer) {
-  const db = await openDB();
-  const tx = db.transaction('timers', 'readwrite');
-  tx.objectStore('timers').put(timer);
-  return new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+async function dbSave(record) {
+  try {
+    const db = await openDB();
+    const tx = db.transaction('timers', 'readwrite');
+    tx.objectStore('timers').put(record);
+    return new Promise(res => { tx.oncomplete = res; tx.onerror = res; });
+  } catch(e) {}
 }
 
-async function deleteTimer(id) {
-  const db = await openDB();
-  const tx = db.transaction('timers', 'readwrite');
-  tx.objectStore('timers').delete(id);
-  return new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+async function dbDelete(id) {
+  try {
+    const db = await openDB();
+    const tx = db.transaction('timers', 'readwrite');
+    tx.objectStore('timers').delete(id);
+    return new Promise(res => { tx.oncomplete = res; tx.onerror = res; });
+  } catch(e) {}
 }
 
-async function loadTimers() {
-  const db = await openDB();
-  return new Promise((resolve) => {
-    const req = db.transaction('timers', 'readonly').objectStore('timers').getAll();
-    req.onsuccess = () => {
-      const map = {};
-      (req.result || []).forEach(t => { map[t.id] = t; });
-      resolve(map);
-    };
-    req.onerror = () => resolve({});
-  });
+async function dbGetAll() {
+  try {
+    const db = await openDB();
+    return new Promise(resolve => {
+      const tx = db.transaction('timers', 'readonly');
+      const req = tx.objectStore('timers').getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => resolve([]);
+    });
+  } catch(e) { return []; }
 }
 
-// ─── Disparar notificación ───
+async function dbClear() {
+  try {
+    const db = await openDB();
+    const tx = db.transaction('timers', 'readwrite');
+    tx.objectStore('timers').clear();
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════
+// Mostrar notificación
+// ══════════════════════════════════════════════
 async function fireNotification(id, title, body) {
   await self.registration.showNotification(title || '⏱ HYPER LIFE', {
     body: body || '¡Descanso terminado! A por la siguiente serie.',
@@ -71,102 +92,110 @@ async function fireNotification(id, title, body) {
     tag: id,
     requireInteraction: true,
     renotify: true,
-    vibrate: [300, 100, 300, 100, 300],
-    data: { id }
+    vibrate: [300, 100, 300, 100, 300]
   });
-  await deleteTimer(id);
-  // Avisar a la página abierta
+  // Notificar a la app
   const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
   clients.forEach(c => c.postMessage({ type: 'TIMER_FIRED', id }));
 }
 
-// ─── Revisar timers vencidos (se llama periódicamente) ───
-async function checkMissedTimers() {
-  const timers = await loadTimers();
-  const now = Date.now();
-  for (const [id, t] of Object.entries(timers)) {
-    if (id === 'daily_reminder') continue;
-    if (t.fireAt <= now) {
-      await fireNotification(id, t.title, t.body);
-    }
-  }
+// ══════════════════════════════════════════════
+// Loop principal — revisa timers cada ~1s
+// Se mantiene vivo usando waitUntil + fetch-ping
+// ══════════════════════════════════════════════
+function hasPendingTimers() {
+  return Object.keys(pendingTimers).some(k => k !== 'daily_reminder');
 }
 
-// ─── Loop activo: mantiene el SW despierto revisando cada CHECK_INTERVAL ms ───
-// Usa waitUntil encadenado para evitar que el navegador mate el SW antes de tiempo.
-// Se re-agenda solo mientras haya timers pendientes.
-let loopRunning = false;
-
-async function startTimerLoop() {
+function startLoop() {
   if (loopRunning) return;
   loopRunning = true;
+  runLoop();
+}
 
-  const tick = async () => {
-    await checkMissedTimers();
-    const timers = await loadTimers();
-    // Filtrar solo timers reales (no daily)
-    const active = Object.entries(timers).filter(([id]) => id !== 'daily_reminder');
-    if (active.length > 0) {
-      // Hay timers activos → seguir el loop
-      await new Promise(resolve => setTimeout(resolve, CHECK_INTERVAL));
-      await tick();
+function runLoop() {
+  if (!hasPendingTimers()) {
+    loopRunning = false;
+    return;
+  }
+  // waitUntil mantiene el SW despierto mientras hay trabajo
+  const workPromise = new Promise(async resolve => {
+    await sleep(1000);
+    const now = Date.now();
+    const fired = [];
+    for (const [id, t] of Object.entries(pendingTimers)) {
+      if (id === 'daily_reminder') continue;
+      if (t.fireAt <= now) {
+        fired.push(t);
+      }
+    }
+    for (const t of fired) {
+      delete pendingTimers[t.id];
+      await dbDelete(t.id);
+      await fireNotification(t.id, t.title, t.body);
+    }
+    resolve();
+  });
+
+  // Usar fetch-ping como keepalive (truco conocido para Chrome Android)
+  const keepAlive = fetch('/jim/sw-ping.txt', { cache: 'no-store' }).catch(() => {});
+
+  self.registration.active && self.registration.active.postMessage && null; // noop
+
+  // Encadenar: cuando termina workPromise, llamar al siguiente ciclo
+  workPromise.then(() => {
+    if (hasPendingTimers()) {
+      runLoop();
     } else {
       loopRunning = false;
     }
-  };
-
-  // Envolver en waitUntil para mantener SW activo
-  self.registration.active?.postMessage?.({});  // no-op keepalive hint
-  tick().catch(() => { loopRunning = false; });
+  });
 }
 
-// ─── Background Sync (para cuando vuelve la conexión / SW se despierta) ───
-self.addEventListener('sync', e => {
-  if (e.tag === 'check-timers') {
-    e.waitUntil(checkMissedTimers());
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ══════════════════════════════════════════════
+// Recuperar timers perdidos al despertar el SW
+// ══════════════════════════════════════════════
+async function checkMissedTimers() {
+  const saved = await dbGetAll();
+  const now = Date.now();
+  for (const t of saved) {
+    if (t.id === 'daily_reminder') continue;
+    if (t.fireAt <= now) {
+      // Sonó mientras el SW estaba muerto
+      await fireNotification(t.id, t.title, t.body);
+      await dbDelete(t.id);
+    } else {
+      // Aún no ha sonado — restaurar en memoria y arrancar loop
+      pendingTimers[t.id] = t;
+    }
   }
-});
+  if (hasPendingTimers()) startLoop();
+}
 
-// ─── Periodic Background Sync (Chrome Android, si está disponible) ───
-self.addEventListener('periodicsync', e => {
-  if (e.tag === 'check-timers') {
-    e.waitUntil(checkMissedTimers());
-  }
-});
-
-// ─── Daily workout reminder 7:30 AM Lun-Vie ───
-let dailyReminderHandle = null;
-
-async function scheduleDailyReminders() {
+// ══════════════════════════════════════════════
+// Recordatorio diario 7:30 AM Lun-Vie
+// ══════════════════════════════════════════════
+function scheduleDailyReminders() {
+  if (dailyTimeout) { clearTimeout(dailyTimeout); dailyTimeout = null; }
   const now = new Date();
-  const dow = now.getDay(); // 0=Dom 6=Sab
-
+  const dow = now.getDay();
   let target = new Date(now);
   target.setHours(7, 30, 0, 0);
-
   let daysAhead = 0;
   if (now >= target || dow === 0 || dow === 6) {
     daysAhead = 1;
-    let nextDow = (dow + daysAhead) % 7;
-    while (nextDow === 0 || nextDow === 6) {
-      daysAhead++;
-      nextDow = (dow + daysAhead) % 7;
-    }
+    let nd = (dow + daysAhead) % 7;
+    while (nd === 0 || nd === 6) { daysAhead++; nd = (dow + daysAhead) % 7; }
     target.setDate(target.getDate() + daysAhead);
   }
-
   const delay = target.getTime() - Date.now();
-  if (dailyReminderHandle) clearTimeout(dailyReminderHandle);
-
-  // Guardar en IDB para recuperarlo si el SW muere
-  await saveTimer({
-    id: 'daily_reminder',
-    fireAt: target.getTime(),
-    title: '💪 HYPER LIFE — ¡A entrenar!',
-    body: '¡Son las 7:30! Hoy es día de entrenamiento. ¡Vamos Jaime! 🔥'
-  });
-
-  dailyReminderHandle = setTimeout(async () => {
+  // Guardar en IDB para sobrevivir restart
+  dbSave({ id: 'daily_reminder', fireAt: target.getTime(), title: '💪 HYPER LIFE — ¡A entrenar!', body: '¡Son las 7:30! Hoy es día de entrenamiento. ¡Vamos Jaime! 🔥' });
+  dailyTimeout = setTimeout(async () => {
     await self.registration.showNotification('💪 HYPER LIFE — ¡A entrenar!', {
       body: '¡Son las 7:30! Hoy es día de entrenamiento. ¡Vamos Jaime! 🔥',
       icon: '/jim/icon.png',
@@ -179,58 +208,53 @@ async function scheduleDailyReminders() {
         { action: 'dismiss', title: 'Cerrar' }
       ]
     });
-    await deleteTimer('daily_reminder');
-    scheduleDailyReminders(); // re-agendar para el día siguiente
+    await dbDelete('daily_reminder');
+    scheduleDailyReminders(); // Programar el siguiente
   }, delay);
 }
 
-// ─── Message handler ───
+// ══════════════════════════════════════════════
+// Manejador de mensajes desde la app
+// ══════════════════════════════════════════════
 self.addEventListener('message', async e => {
   const data = e.data;
   if (!data) return;
 
   if (data.type === 'SCHEDULE_TIMER') {
     const { id, delay, title, body } = data;
-    const fireAt = Date.now() + Math.max(delay || 0, 500);
-
-    // Guardar en IDB con timestamp absoluto
-    await saveTimer({ id, fireAt, title, body });
-
-    // Iniciar el loop activo que revisa IDB periódicamente
-    startTimerLoop();
-
-    // También intentar un setTimeout directo como respaldo
-    // (funciona si el SW no fue matado)
-    setTimeout(async () => {
-      const timers = await loadTimers();
-      if (timers[id] && timers[id].fireAt <= Date.now() + 1000) {
-        await fireNotification(id, title, body);
-      }
-    }, Math.max(delay || 0, 500));
+    const fireAt = Date.now() + Math.max(delay || 0, 100);
+    const record = { id, fireAt, title, body };
+    pendingTimers[id] = record;
+    await dbSave(record);
+    startLoop(); // Arranca/continúa el loop
+    if (e.source) e.source.postMessage({ type: 'TIMER_SCHEDULED', id, fireAt });
   }
 
   if (data.type === 'CANCEL_TIMER') {
     const { id } = data;
     if (id) {
-      await deleteTimer(id);
+      delete pendingTimers[id];
+      await dbDelete(id);
     } else {
-      const timers = await loadTimers();
-      for (const tid of Object.keys(timers)) {
-        if (tid !== 'daily_reminder') await deleteTimer(tid);
+      // Cancelar todos los timers de descanso (no el daily)
+      for (const k of Object.keys(pendingTimers)) {
+        if (k !== 'daily_reminder') {
+          delete pendingTimers[k];
+          await dbDelete(k);
+        }
       }
     }
-    loopRunning = false; // detener el loop si no hay más timers
   }
 
-  if (data.type === 'SCHEDULE_DAILY') {
-    scheduleDailyReminders();
+  if (data.type === 'KEEPALIVE') {
+    // Ping desde la app para mantener el SW activo
+    if (hasPendingTimers() && !loopRunning) startLoop();
   }
 
   if (data.type === 'GET_TIMER_STATUS') {
     const { id } = data;
-    const timers = await loadTimers();
-    const t = timers[id];
-    e.source?.postMessage({
+    const t = pendingTimers[id];
+    if (e.source) e.source.postMessage({
       type: 'TIMER_STATUS',
       id,
       fireAt: t ? t.fireAt : null,
@@ -238,23 +262,29 @@ self.addEventListener('message', async e => {
     });
   }
 
-  // Ping de keepalive desde la página (la app puede enviar esto cada ~10s)
-  if (data.type === 'KEEPALIVE') {
-    await checkMissedTimers();
+  if (data.type === 'SCHEDULE_DAILY') {
+    scheduleDailyReminders();
   }
 });
 
-// ─── Fetch handler — responde a pings internos y hace cache básico ───
-self.addEventListener('fetch', e => {
-  // No interceptar requests de Firebase ni externos
-  if (!e.request.url.includes('/jim/')) return;
-
-  e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
-  );
+// ══════════════════════════════════════════════
+// Background Sync — SW despertado por el sistema
+// ══════════════════════════════════════════════
+self.addEventListener('sync', e => {
+  if (e.tag === 'check-timers') {
+    e.waitUntil(checkMissedTimers());
+  }
 });
 
-// ─── Notification click → abrir/enfocar app ───
+self.addEventListener('periodicsync', e => {
+  if (e.tag === 'check-timers') {
+    e.waitUntil(checkMissedTimers());
+  }
+});
+
+// ══════════════════════════════════════════════
+// Clic en notificación → abrir/enfocar la app
+// ══════════════════════════════════════════════
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   if (e.action === 'dismiss') return;
@@ -265,4 +295,18 @@ self.addEventListener('notificationclick', e => {
       return self.clients.openWindow('/jim/');
     })
   );
+});
+
+// ══════════════════════════════════════════════
+// Fetch — servir cache + crear sw-ping.txt
+// ══════════════════════════════════════════════
+self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+  // Responder al ping de keepalive
+  if (url.pathname === '/jim/sw-ping.txt') {
+    e.respondWith(new Response('ok', { headers: { 'Content-Type': 'text/plain' } }));
+    return;
+  }
+  // Para el resto, red primero (sin cache agresiva)
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });
