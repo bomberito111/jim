@@ -1,7 +1,7 @@
-// Service Worker for HYPER LIFE - Background Timer Notifications
-// Uses absolute timestamps so timers survive SW sleep/restart
+// Service Worker for HYPER LIFE v4 — Background Timer + Daily Reminders
+// Timestamps absolute para que el timer survive background/kill
 
-const CACHE = 'jim-sw-v3';
+const CACHE = 'jim-sw-v4';
 const DB_NAME = 'jim-timers';
 
 self.addEventListener('install', e => { self.skipWaiting(); });
@@ -9,88 +9,60 @@ self.addEventListener('activate', e => {
   e.waitUntil(
     Promise.all([
       self.clients.claim(),
-      checkMissedTimers()
+      checkMissedTimers(),
+      scheduleDailyReminders()
     ])
   );
 });
 
-// In-memory timer handles (for when SW is alive)
+// In-memory timer handles
 let timerHandles = {};
+let pendingTimers = {};
+let dailyReminderHandle = null;
 
-// Persistent timer store using SW global scope + IndexedDB fallback
-let pendingTimers = {}; // { id: { fireAt, title, body } }
-
-// ─── Save timers to IndexedDB for persistence across SW restarts ───
-function saveTimers() {
-  try {
-    const req = indexedDB.open(DB_NAME, 1);
-    req.onupgradeneeded = e => {
-      e.target.result.createObjectStore('timers', { keyPath: 'id' });
-    };
-    req.onsuccess = e => {
-      const db = e.target.result;
-      const tx = db.transaction('timers', 'readwrite');
-      const store = tx.objectStore('timers');
-      store.clear();
-      Object.entries(pendingTimers).forEach(([id, t]) => {
-        store.put({ id, fireAt: t.fireAt, title: t.title, body: t.body });
-      });
-    };
-  } catch(err) { /* IndexedDB not available */ }
-}
-
-// ─── Load timers from IndexedDB ───
-function loadTimers() {
-  return new Promise(resolve => {
+// ─── IndexedDB helpers ───
+function openDB() {
+  return new Promise((resolve, reject) => {
     try {
       const req = indexedDB.open(DB_NAME, 1);
       req.onupgradeneeded = e => {
-        e.target.result.createObjectStore('timers', { keyPath: 'id' });
-      };
-      req.onsuccess = e => {
         const db = e.target.result;
-        const tx = db.transaction('timers', 'readonly');
-        const store = tx.objectStore('timers');
-        const getAll = store.getAll();
-        getAll.onsuccess = () => {
-          const timers = {};
-          (getAll.result || []).forEach(t => { timers[t.id] = t; });
-          resolve(timers);
-        };
-        getAll.onerror = () => resolve({});
+        if (!db.objectStoreNames.contains('timers')) db.createObjectStore('timers', { keyPath: 'id' });
       };
-      req.onerror = () => resolve({});
-    } catch(e) { resolve({}); }
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror = () => reject(req.error);
+    } catch(e) { reject(e); }
   });
 }
 
-// ─── Check if any timers fired while SW was dead ───
-async function checkMissedTimers() {
-  const saved = await loadTimers();
-  const now = Date.now();
-  for (const [id, t] of Object.entries(saved)) {
-    if (t.fireAt <= now) {
-      // Timer already expired - fire notification now
-      await self.registration.showNotification(t.title || '⏱ HYPER LIFE', {
-        body: t.body || '¡Descanso terminado! A por la siguiente serie.',
-        icon: '/jim/icon.png',
-        badge: '/jim/icon.png',
-        tag: id,
-        requireInteraction: true,
-        vibrate: [300, 100, 300, 100, 300]
-      });
-      delete saved[id];
-    } else {
-      // Re-schedule for remaining time
-      pendingTimers[id] = t;
-      scheduleInMemory(id, t.fireAt - now, t.title, t.body);
-    }
-  }
-  // Clean up fired timers in DB
-  saveTimers();
+async function saveTimers() {
+  try {
+    const db = await openDB();
+    const tx = db.transaction('timers', 'readwrite');
+    const store = tx.objectStore('timers');
+    store.clear();
+    Object.entries(pendingTimers).forEach(([id, t]) => store.put({ id, fireAt: t.fireAt, title: t.title, body: t.body }));
+  } catch(e) {}
 }
 
-// ─── Schedule notification using setTimeout (in-memory) ───
+async function loadTimers() {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction('timers', 'readonly');
+      const store = tx.objectStore('timers');
+      const req = store.getAll();
+      req.onsuccess = () => {
+        const map = {};
+        (req.result || []).forEach(t => { map[t.id] = t; });
+        resolve(map);
+      };
+      req.onerror = () => resolve({});
+    });
+  } catch(e) { return {}; }
+}
+
+// ─── Schedule in-memory notification ───
 function scheduleInMemory(id, delay, title, body) {
   if (timerHandles[id]) clearTimeout(timerHandles[id]);
   timerHandles[id] = setTimeout(async () => {
@@ -105,10 +77,72 @@ function scheduleInMemory(id, delay, title, body) {
     delete pendingTimers[id];
     delete timerHandles[id];
     saveTimers();
-    // Notify all clients that timer fired
     const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     clients.forEach(c => c.postMessage({ type: 'TIMER_FIRED', id }));
   }, Math.max(delay, 100));
+}
+
+// ─── Check missed timers on SW wake ───
+async function checkMissedTimers() {
+  const saved = await loadTimers();
+  const now = Date.now();
+  for (const [id, t] of Object.entries(saved)) {
+    if (id === 'daily_reminder') continue; // handled separately
+    if (t.fireAt <= now) {
+      await self.registration.showNotification(t.title || '⏱ HYPER LIFE', {
+        body: t.body || '¡Descanso terminado! A por la siguiente serie.',
+        icon: '/jim/icon.png',
+        badge: '/jim/icon.png',
+        tag: id,
+        requireInteraction: true,
+        vibrate: [300, 100, 300, 100, 300]
+      });
+    } else {
+      pendingTimers[id] = t;
+      scheduleInMemory(id, t.fireAt - now, t.title, t.body);
+    }
+  }
+  saveTimers();
+}
+
+// ─── Daily workout reminder 7:30 AM Mon-Fri ───
+async function scheduleDailyReminders() {
+  const now = new Date();
+  const dow = now.getDay(); // 0=Sun 6=Sat
+  
+  // Get next valid weekday at 07:30
+  let target = new Date(now);
+  target.setHours(7, 30, 0, 0);
+  
+  // If already past 7:30 today or it's weekend, advance to next weekday
+  let daysAhead = 0;
+  if (now >= target || dow === 0 || dow === 6) {
+    daysAhead = 1;
+    // Skip weekends
+    let nextDow = (dow + daysAhead) % 7;
+    while (nextDow === 0 || nextDow === 6) { daysAhead++; nextDow = (dow + daysAhead) % 7; }
+    target.setDate(target.getDate() + daysAhead);
+  }
+  
+  const delay = target.getTime() - Date.now();
+  if (dailyReminderHandle) clearTimeout(dailyReminderHandle);
+  
+  dailyReminderHandle = setTimeout(async () => {
+    await self.registration.showNotification('💪 HYPER LIFE — ¡A entrenar!', {
+      body: '¡Son las 7:30! Hoy es día de entrenamiento. ¡Vamos Jaime! 🔥',
+      icon: '/jim/icon.png',
+      badge: '/jim/icon.png',
+      tag: 'daily_workout',
+      requireInteraction: false,
+      vibrate: [200, 100, 200, 100, 400],
+      actions: [
+        { action: 'open', title: '💪 Abrir app' },
+        { action: 'dismiss', title: 'Cerrar' }
+      ]
+    });
+    // Schedule next one
+    scheduleDailyReminders();
+  }, delay);
 }
 
 // ─── Message handler ───
@@ -119,12 +153,9 @@ self.addEventListener('message', async e => {
   if (data.type === 'SCHEDULE_TIMER') {
     const { id, delay, title, body } = data;
     const fireAt = Date.now() + (delay || 0);
-    // Cancel existing
     if (timerHandles[id]) clearTimeout(timerHandles[id]);
-    // Store with absolute timestamp
     pendingTimers[id] = { id, fireAt, title, body };
     saveTimers();
-    // Schedule in memory
     scheduleInMemory(id, delay, title, body);
   }
 
@@ -135,7 +166,6 @@ self.addEventListener('message', async e => {
       delete timerHandles[id];
       delete pendingTimers[id];
     } else {
-      // Cancel all
       Object.values(timerHandles).forEach(h => clearTimeout(h));
       timerHandles = {};
       pendingTimers = {};
@@ -143,21 +173,25 @@ self.addEventListener('message', async e => {
     saveTimers();
   }
 
+  if (data.type === 'SCHEDULE_DAILY') {
+    scheduleDailyReminders();
+  }
+
   if (data.type === 'GET_TIMER_STATUS') {
     const { id } = data;
     const t = pendingTimers[id];
     e.source?.postMessage({
-      type: 'TIMER_STATUS',
-      id,
+      type: 'TIMER_STATUS', id,
       fireAt: t ? t.fireAt : null,
       remaining: t ? Math.max(0, t.fireAt - Date.now()) : null
     });
   }
 });
 
-// ─── Notification click → open/focus the app ───
+// ─── Notification click → open/focus app ───
 self.addEventListener('notificationclick', e => {
   e.notification.close();
+  if (e.action === 'dismiss') return;
   e.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
       const jimClient = clients.find(c => c.url.includes('/jim'));
