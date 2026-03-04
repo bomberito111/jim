@@ -1228,7 +1228,7 @@ function getAllEx(){return Object.values(ROUTINE).flatMap(d=>d.exercises||[]);}
    BOOT
 ═══════════════════════════════════════════════ */
 async function boot(){
-  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});if(Notification.permission==='default')Notification.requestPermission();if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r;console.log('[SW] ok');}).catch(e=>console.warn('[SW] fail',e));}
+  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});if(Notification.permission==='default')Notification.requestPermission();if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r;console.log('[SW] ok');}).navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='TIMER_FIRED'&&e.data?.id==='rest'){stopKeepalive();releaseWakeLock();}});catch(e=>console.warn('[SW] fail',e));}
   loadRoutine();
   const acc=lsGet('accent');
   if(acc) applyAccent(acc.v,acc.r);
@@ -1262,8 +1262,9 @@ setInterval(()=>{if(activeW)saveActiveW();},10000);
 // Periodic sync every 2 min
 setInterval(()=>{ fbWrite(); },120000);
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){clearTimeout(_syncTimer);if(activeW)saveActiveW();saveView(curView);fbWrite();}
-  else{if(activeW&&curView==='workout'){startElapsed();if(rtEndTime>0)updRT();}if(!_syncTimer)setTimeout(fbWrite,1000);if(!_syncTimer)setTimeout(fbWrite,1000);}
+  if(document.hidden){clearTimeout(_syncTimer);if(activeW)saveActiveW();saveView(curView);}
+  else{if(activeW&&curView==='workout'){startElapsed();if(rtEndTime>0)updRT();if(window._swReg)window._swReg.active&&window._swReg.active.postMessage({type:'PING'});}
+    if(!_syncTimer)_syncTimer=setTimeout(fbWrite,2000);}
 });
 
 /* ═══════════════════════════════════════════════
@@ -1642,6 +1643,7 @@ function startElapsed(){
 
 /* REST TIMER */
 function startRT(secs,cb){ stopRT();rtEndTime=Date.now()+secs*1000;rtLate=false;rtEndCb=cb||null;swNotify(secs*1000);document.getElementById('rtimer').classList.remove('hidden');updRT();rtIval=setInterval(updRT,500);
+  startKeepalive();acquireWakeLock();
   }
 function updRT(){
   const now=Date.now();
@@ -1679,7 +1681,8 @@ function stopRT(){
   rtLate=false;rtEndTime=0;
   try{if(window._swReg&&window._swReg.active)window._swReg.active.postMessage({type:'CANCEL_TIMER'});}catch(e){}
   document.getElementById('rtimer').classList.add('hidden');
-}
+stopKeepalive();releaseWakeLock();
+  }
 function adjRT(d){
   if(rtLate||rtEndTime===0){
     rtEndTime=Date.now()+Math.abs(d)*1000;
@@ -1693,6 +1696,14 @@ function adjRT(d){
   }
   updRT();
 }
+// === KEEPALIVE: mantiene el SW activo mientras hay timer ===
+let _kaIval=null;
+function startKeepalive(){if(_kaIval)return;_kaIval=setInterval(()=>{try{if(window._swReg?.active)window._swReg.active.postMessage({type:'KEEPALIVE'});}catch(e){}},8000);}
+function stopKeepalive(){clearInterval(_kaIval);_kaIval=null;}
+// === WAKE LOCK: evita que la pantalla se apague ===
+let _wakeLock=null;
+async function acquireWakeLock(){try{if('wakeLock' in navigator){_wakeLock=await navigator.wakeLock.request('screen');_wakeLock.addEventListener('release',()=>{_wakeLock=null;});}}catch(e){}}
+function releaseWakeLock(){try{if(_wakeLock){_wakeLock.release();_wakeLock=null;}}catch(e){}}
 function showPRCat(name,w){const el=document.createElement('div');el.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;animation:vu .3s ease';el.innerHTML=`<div style="font-family:var(--hd);font-size:48px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">🏆 PR!</div><div style="font-size:15px;color:var(--text);margin-bottom:12px;font-family:var(--hd2);text-align:center;padding:0 20px">${name}<br><span style="color:var(--gold);font-size:22px;font-family:var(--mono);font-weight:700">${w}kg</span></div><img src="${CAT_GIFS[Math.floor(Math.random()*CAT_GIFS.length)]}" style="width:160px;height:160px;object-fit:cover;border-radius:16px;border:2px solid var(--gold)"><div style="margin-top:14px;font-size:12px;color:var(--text3);font-family:var(--hd2)">Toca para cerrar</div>`;el.onclick=()=>el.remove();document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}function swNotify(ms){try{if(window._swReg&&window._swReg.active){window._swReg.active.postMessage({type:'SCHEDULE_TIMER',id:'rest',delay:ms,title:'⏱ HYPER LIFE',body:'¡Descanso terminado! A por la siguiente serie.'});}}catch(e){}}function skipRT(){stopRT();}function showExNotesModal(ei){const ex=activeW?.exercises[ei];if(!ex)return;const savedKey='exnote_'+ex.id;const existing=localStorage.getItem(savedKey)||'';document.body.insertAdjacentHTML('beforeend',`<div class="overlay open" id="exnote-ol" onclick="if(event.target===this)document.getElementById('exnote-ol').remove()"><div class="sheet" style="position:relative"><div class="sheet-handle"></div><div class="sheet-title" style="font-size:20px">\ud83d\udcdd Notas: ${ex.name}</div><div style="font-size:11px;color:var(--text2);margin-bottom:12px;font-family:var(--hd2)">Estas notas aparecern cada vez que hagas este ejercicio.</div><textarea class="inp" id="exnote-ta" rows="5" style="resize:vertical;line-height:1.6;font-size:14px;min-height:120px">${existing}</textarea><div style="display:flex;gap:8px;margin-top:12px"><button class="btn bp" style="flex:1" onclick="localStorage.setItem('exnote_'+activeW?.exercises[${ei}]?.id,document.getElementById('exnote-ta').value);document.getElementById('exnote-ol').remove();toast('\u2705 Nota guardada')">Guardar</button><button class="btn bg" onclick="document.getElementById('exnote-ol').remove()">Cancelar</button></div></div></div>`);}
 
 /* FINISH WORKOUT */
