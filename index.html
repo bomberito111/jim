@@ -1243,7 +1243,7 @@ async function boot(){
     return;
   }
 
-  await renderHome();
+  try{await renderHome();}catch(e){document.getElementById('v-home').innerHTML='<div style="padding:20px;color:red;font-family:monospace">ERROR: '+e.message+'<br>'+e.stack+'</div>';}
 
   initSync().then(ok=>{
     if(ok){
