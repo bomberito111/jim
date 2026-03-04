@@ -1263,7 +1263,7 @@ setInterval(()=>{if(activeW)saveActiveW();},10000);
 setInterval(()=>{ fbWrite(); },120000);
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){clearTimeout(_syncTimer);if(activeW)saveActiveW();saveView(curView);fbWrite();}
-  else{if(activeW&&curView==='workout'){startElapsed();if(rtEndTime>0)updRT();}if(!_syncTimer)setTimeout(fbWrite,1000);if(!_syncTimer)setTimeout(fbWrite,1000);}
+  else{const _saved=localStorage.getItem('h4_rtEnd');if(_saved&&!rtEndTime){rtEndTime=parseInt(_saved);if(rtEndTime>Date.now()){rtLate=false;clearInterval(rtIval);rtIval=setInterval(updRT,500);document.getElementById('rtimer').classList.remove('hidden');}else if(rtEndTime>0){rtLate=true;}}if(activeW&&curView==='workout'){startElapsed();if(rtEndTime>0)updRT();}if(!_syncTimer)setTimeout(fbWrite,1000);if(!_syncTimer)setTimeout(fbWrite,1000);}
 });
 
 /* ═══════════════════════════════════════════════
@@ -1641,7 +1641,7 @@ function startElapsed(){
 }
 
 /* REST TIMER */
-function startRT(secs,cb){ stopRT();rtEndTime=Date.now()+secs*1000;rtLate=false;rtEndCb=cb||null;swNotify(secs*1000);document.getElementById('rtimer').classList.remove('hidden');updRT();rtIval=setInterval(updRT,500);
+function startRT(secs,cb){ stopRT();rtEndTime=Date.now()+secs*1000;rtLate=false;rtEndCb=cb||null;localStorage.setItem('h4_rtEnd',rtEndTime);swNotify(secs*1000);document.getElementById('rtimer').classList.remove('hidden');updRT();rtIval=setInterval(updRT,500);
   }
 function updRT(){
   const now=Date.now();
@@ -1676,7 +1676,7 @@ function sendLocalNotif(){
 }
 function stopRT(){
   clearInterval(rtIval);rtIval=null;
-  rtLate=false;rtEndTime=0;
+  rtLate=false;rtEndTime=0;localStorage.removeItem('h4_rtEnd');
   try{if(window._swReg&&window._swReg.active)window._swReg.active.postMessage({type:'CANCEL_TIMER'});}catch(e){}
   document.getElementById('rtimer').classList.add('hidden');
 }
@@ -1687,7 +1687,7 @@ function adjRT(d){
     try{if(window._swReg&&window._swReg.active)window._swReg.active.postMessage({type:'SCHEDULE_TIMER',id:'rest',delay:Math.abs(d)*1000,title:'⏱ HYPER LIFE',body:'¡Descanso terminado! A por la siguiente serie.'});}catch(e){}
     document.getElementById('rtimer').classList.remove('hidden');
   } else {
-    rtEndTime+=d*1000;
+    rtEndTime+=d*1000;localStorage.setItem('h4_rtEnd',rtEndTime);
     if(rtEndTime<Date.now()){rtEndTime=Date.now();}
     swNotify(rtEndTime-Date.now());
   }
@@ -2580,7 +2580,7 @@ function emptyState(ico,title,desc){
   return `<div class="empty"><span class="empty-ico">${ico}</span><h3>${title}</h3><p>${desc}</p></div>`;
 }
 function tick(){return new Promise(r=>setTimeout(r,50));}
-function getWeekNum(d){const s=new Date(d.getFullYear(),0,1);return Math.ceil(((d-s)/86400000+s.getDay()+1)/7);}
+function getWeekNum(d){const s=new Date(d.getFullYear(),0,1);return Math.ceil(((d-s)/86400000+s.getDay()+1)/7);}(function initGyro(){if(!window.DeviceOrientationEvent)return;let _gx=0,_gy=0;window.addEventListener('deviceorientation',e=>{_gx=Math.max(-15,Math.min(15,e.gamma||0));_gy=Math.max(-15,Math.min(15,e.beta||0));},true);document.addEventListener('touchstart',e=>{const b=e.target.closest('.btn');if(!b)return;b.style.transform=`perspective(400px) rotateX(${-_gy*0.4}deg) rotateY(${_gx*0.4}deg) scale(0.97)`;b.style.transition='transform 0.05s ease';},true);document.addEventListener('touchend',e=>{const b=e.target.closest('.btn');if(!b)return;b.style.transform='';b.style.transition='transform 0.3s ease';},true);})();
 </script>
 </body>
 </html>
