@@ -18,18 +18,18 @@
    VARIABLES & THEME
 ═══════════════════════════════════════════════ */
 :root {
-  --ac:#C9AA72; --ac2:201,170,114;
+  --ac:#C8C8C8; --ac2:200,200,200;
   --bg0:#06060F; --bg1:#09091A; --bg2:#0D0D1E; --bg3:#121228; --bg4:#1A1A35;
   --border:rgba(255,255,255,0.05); --border2:rgba(255,255,255,0.09);
-  --text:#F0F0FF; --text2:#5A5A90; --text3:#2E2E55;
-  --gold:#C9AA72; --gold2:201,170,114;
+  --text:#F0F0FF; --text2:#7878B0; --text3:#4A4A75;
+  --gold:#C8C8C8; --gold2:200,200,200;
   --red:#E8455A; --success:#0ECFA0; --purple:#9B79F0; --amber:#F4A023;
   --mono:'JetBrains Mono',monospace; --body:'Outfit',sans-serif;
   --hd:'Bebas Neue',cursive; --hd2:'Rajdhani',sans-serif;
   --r:16px; --rsm:10px;
   --safe-bottom:env(safe-area-inset-bottom,0px);
-  --glow:0 0 60px rgba(201,170,114,0.04);
-  --glow-strong:0 0 40px rgba(201,170,114,0.15);
+  --glow:0 0 60px rgba(200,200,200,0.04);
+  --glow-strong:0 0 40px rgba(200,200,200,0.15);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%;overflow:hidden}
@@ -92,7 +92,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 .ni{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:3px;background:none;border:none;color:var(--text3);cursor:pointer;
-  font-family:var(--hd2);font-size:8px;font-weight:700;letter-spacing:1.2px;
+  font-family:var(--hd2);font-size:9px;font-weight:700;letter-spacing:.8px;
   text-transform:uppercase;transition:color .18s;position:relative;padding:0;min-width:44px;min-height:44px;
 }
 .ni.on{color:var(--ac)}
@@ -143,12 +143,12 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 .btn:active::after{background:rgba(255,255,255,0.08)}
 .btn-w{width:100%}
 .bp{
-  background:linear-gradient(135deg,#D4B978,#A8894E,#C9AA72);
+  background:linear-gradient(135deg,#555,#333,#C8C8C8);
   color:#05050E;font-weight:800;
-  box-shadow:0 4px 28px rgba(200,169,110,.35),inset 0 1px 0 rgba(255,255,255,.2);
+  box-shadow:0 4px 28px rgba(200,200,200,.35),inset 0 1px 0 rgba(255,255,255,.2);
   letter-spacing:1.5px;
 }
-.bp:active{transform:scale(.97);box-shadow:0 2px 12px rgba(200,169,110,.2)}
+.bp:active{transform:scale(.97);box-shadow:0 2px 12px rgba(200,200,200,.2)}
 .bg{
   background:rgba(255,255,255,0.04);
   color:var(--text);
@@ -213,12 +213,12 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
   font-size:72px;
   letter-spacing:8px;
   line-height:0.9;
-  background:linear-gradient(135deg,#F5F0E0 0%,#C9AA72 40%,#8A6A30 70%,#C9AA72 100%);
+  background:linear-gradient(135deg,#FFFFFF 0%,#AAAAAA 50%,#666666 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   background-clip:text;
   position:relative;
   display:inline-block;
-  filter:drop-shadow(0 0 30px rgba(201,170,114,.3));
+  filter:drop-shadow(0 0 30px rgba(200,200,200,.3));
 }
 .hl-logo-sub{
   font-family:var(--hd2);
@@ -527,7 +527,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 .hist-name{font-family:var(--hd);font-size:20px;margin-bottom:7px;letter-spacing:.5px}
 .hist-meta{display:flex;gap:12px;font-family:var(--mono);font-size:11px;color:var(--text2);flex-wrap:wrap}
 .pr-item{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
-.pr-crown{font-size:8px;font-weight:800;letter-spacing:.8px;padding:2px 8px;border-radius:4px;background:linear-gradient(135deg,#C9AA72,#8A6A30);color:#05050E;text-transform:uppercase;display:inline-block;margin-bottom:3px;font-family:var(--hd2)}
+.pr-crown{font-size:8px;font-weight:800;letter-spacing:.8px;padding:2px 8px;border-radius:4px;background:linear-gradient(135deg,#C8C8C8,#555555);color:#05050E;text-transform:uppercase;display:inline-block;margin-bottom:3px;font-family:var(--hd2)}
 .pr-w{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--gold)}
 
 /* ═══════════════════════════════════════════════
@@ -931,7 +931,7 @@ DEFAULT_ROUTINE[0]={name:'DESCANSO',emoji:'😴',rest:true,exercises:[]};
 DEFAULT_ROUTINE[6]={name:'DESCANSO',emoji:'😴',rest:true,exercises:[]};
 
 const ACCENTS=[
-  {name:'Dorado',v:'#C9AA72',r:'201,170,114'},
+  {name:'Gris Claro',v:'#C8C8C8',r:'200,200,200'},
   {name:'Azul Eléctrico',v:'#4361EE',r:'67,97,238'},
   {name:'Naranja',v:'#F97316',r:'249,115,22'},
   {name:'Cyan',v:'#06B6D4',r:'6,182,212'},
@@ -942,7 +942,7 @@ const ACCENTS=[
 ];
 const DAY_NAMES=['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'];
 const DAY_FULL=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-const GIFS=[
+const CAT_GIFS=['https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif','https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif','https://media.giphy.com/media/pFwRzOLfuGHok/giphy.gif','https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif','https://media.giphy.com/media/GeimqsH0TLDt4tScGw/giphy.gif'];const GIFS=[
   'https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif',
   'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
   'https://media.giphy.com/media/3oriO6qJiXajN0TksU/giphy.gif',
@@ -953,7 +953,7 @@ const GIFS=[
 ═══════════════════════════════════════════════ */
 let ROUTINE=null;
 let curView='home', curDay=new Date().getDay(), progTab='charts';
-let activeW=null, rtSecs=0, rtIval=null, elIval=null, rtEndCb=null;
+let activeW=null, rtEndTime=0, rtIval=null, elIval=null, rtEndCb=null, rtLate=false;
 let charts={};
 let finishedSession=null;
 let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
@@ -1228,7 +1228,7 @@ function getAllEx(){return Object.values(ROUTINE).flatMap(d=>d.exercises||[]);}
    BOOT
 ═══════════════════════════════════════════════ */
 async function boot(){
-  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});
+  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});if(Notification.permission==='default')Notification.requestPermission();if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r;console.log('[SW] ok');}).catch(e=>console.warn('[SW] fail',e));}
   loadRoutine();
   const acc=lsGet('accent');
   if(acc) applyAccent(acc.v,acc.r);
@@ -1263,7 +1263,7 @@ setInterval(()=>{if(activeW)saveActiveW();},10000);
 setInterval(()=>{ fbWrite(); },120000);
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){clearTimeout(_syncTimer);if(activeW)saveActiveW();saveView(curView);fbWrite();}
-  else{if(activeW&&curView==='workout')startElapsed();if(!_syncTimer)setTimeout(fbWrite,1000);}
+  else{if(activeW&&curView==='workout'){startElapsed();if(rtEndTime>0)updRT();}if(!_syncTimer)setTimeout(fbWrite,1000);if(!_syncTimer)setTimeout(fbWrite,1000);}
 });
 
 /* ═══════════════════════════════════════════════
@@ -1373,7 +1373,7 @@ ${resumeBanner}
 
 <!-- HL BRAND HERO (nuevo, reemplaza "JAIME") -->
 <div class="hl-brand-hero">
-  <div class="hl-logo-main">HYPER<br>LIFE</div>
+  <div class="hl-logo-main"><svg width="70" height="50" viewBox="0 0 70 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 6px;display:block;filter:drop-shadow(0 0 15px rgba(200,200,200,.6))"><rect x="10" y="21" width="50" height="8" rx="4" fill="url(#dg1)"/><rect x="2" y="16" width="12" height="18" rx="6" fill="url(#dg1)"/><rect x="56" y="16" width="12" height="18" rx="6" fill="url(#dg1)"/><rect x="14" y="19" width="6" height="12" rx="3" fill="url(#dg2)"/><rect x="50" y="19" width="6" height="12" rx="3" fill="url(#dg2)"/><defs><linearGradient id="dg1" x1="0" y1="0" x2="70" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#C8C8C8"/><stop offset="1" stop-color="#555555"/></linearGradient><linearGradient id="dg2" x1="0" y1="0" x2="70" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#C8C8C8"/><stop offset="1" stop-color="#1A1A1A"/></linearGradient></defs></svg>HYPER<br>LIFE</div>
   <div class="hl-logo-sub">Laboratorio de Hipertrofia</div>
   <div class="hl-logo-line">
     <div class="hl-logo-dot"></div>
@@ -1515,7 +1515,7 @@ function renderWorkout(){
     html+=`<div class="exb${allDone?' done-ex':''}" id="exb-${ei}">
       <div class="exb-header">
         <div class="exb-name">${ex.name}</div>
-        <button class="exb-info-btn" onclick="showExInfo(${ei})">ℹ Técnica</button>
+        <button class="exb-info-btn" onclick="showExInfo(${ei})">ℹ Técnica</button><button class="exb-info-btn" style="background:rgba(244,160,35,.1);color:var(--amber);border-color:rgba(244,160,35,.2);margin-left:4px" onclick="showExNotesModal(${ei})">📝 Notas</button>
       </div>
       <div class="exb-meta">
         ${ex.sets.length}×${ex.rMin}-${ex.rMax} reps · ${ex.rest}s descanso
@@ -1593,7 +1593,7 @@ function toggleS(ei,si,restSec){
   const row=document.getElementById(`sr-${ei}-${si}`);
   if(btn) btn.classList.toggle('ck',s.done);
   if(row) row.classList.toggle('set-done',s.done);
-  if(s.done){startRT(restSec);setTimeout(()=>scrollToActiveSet(ei,si),300);}
+  if(s.done){startRT(restSec);setTimeout(()=>scrollToActiveSet(ei,si),300);const ex2=activeW.exercises[ei];const w2=parseFloat(s.w)||0;if(w2>0){exhist(ex2.id).then(h=>{const allW=h.flatMap(x=>x.sets?.map(ss=>parseFloat(ss.w)||0)||[]);const maxPrev=allW.length?Math.max(...allW):0;if(w2>maxPrev&&maxPrev>0){showPRCat(ex2.name,w2);}});}}
   else{stopRT();}
   updateProgress();saveActiveW();
 }
@@ -1641,19 +1641,59 @@ function startElapsed(){
 }
 
 /* REST TIMER */
-function startRT(secs,cb){
-  stopRT();rtSecs=secs;rtEndCb=cb||null;
-  document.getElementById('rtimer').classList.remove('hidden');
-  updRT();
-  rtIval=setInterval(()=>{rtSecs--;updRT();if(rtSecs<=0){stopRT();if(rtEndCb)rtEndCb();}},1000);
-}
+function startRT(secs,cb){ stopRT();rtEndTime=Date.now()+secs*1000;rtLate=false;rtEndCb=cb||null;swNotify(secs*1000);document.getElementById('rtimer').classList.remove('hidden');updRT();rtIval=setInterval(updRT,500);
+  }
 function updRT(){
-  const d=document.getElementById('rtdisp');
-  if(d){d.textContent=fmtTimer(rtSecs);d.classList.toggle('urg',rtSecs<=10&&rtSecs>0);}
+  const now=Date.now();
+  const remaining=rtEndTime-now;
+  const cnt=document.getElementById('rtdisp');
+  const lbl=document.querySelector('.rt-lbl');
+  if(remaining>0){
+    rtLate=false;
+    const s=Math.ceil(remaining/1000);
+    if(cnt){cnt.textContent=fmtTimer(s);cnt.style.color=s<=10?'var(--red)':'var(--gold)';cnt.classList.toggle('urg',s<=10);}
+    if(lbl)lbl.textContent='DESCANSO';
+  } else {
+    if(!rtLate){
+      rtLate=true;
+      sendLocalNotif();
+      if(rtEndCb)rtEndCb();
+    }
+    const over=Math.floor((now-rtEndTime)/1000);
+    if(cnt){cnt.textContent='+'+fmtTimer(over);cnt.style.color='var(--red)';cnt.classList.add('urg');}
+    if(lbl)lbl.textContent='ATRASADO ⚠️';
+    document.getElementById('rtimer').classList.remove('hidden');
+  }
 }
-function stopRT(){clearInterval(rtIval);rtIval=null;document.getElementById('rtimer').classList.add('hidden');}
-function adjRT(d){rtSecs=Math.max(0,rtSecs+d);updRT();}
-function skipRT(){stopRT();}
+function sendLocalNotif(){
+  try{
+    if(Notification.permission==='granted'){
+      new Notification('⏱ HYPER LIFE',{body:'¡Descanso terminado! A por la siguiente serie.',tag:'rest',renotify:true,silent:false,vibrate:[200,100,200]});
+    } else if(Notification.permission!=='denied'){
+      Notification.requestPermission().then(p=>{if(p==='granted')new Notification('⏱ HYPER LIFE',{body:'¡Descanso terminado!',tag:'rest'});});
+    }
+  }catch(e){}
+}
+function stopRT(){
+  clearInterval(rtIval);rtIval=null;
+  rtLate=false;rtEndTime=0;
+  try{if(window._swReg&&window._swReg.active)window._swReg.active.postMessage({type:'CANCEL_TIMER'});}catch(e){}
+  document.getElementById('rtimer').classList.add('hidden');
+}
+function adjRT(d){
+  if(rtLate||rtEndTime===0){
+    rtEndTime=Date.now()+Math.abs(d)*1000;
+    rtLate=false;
+    try{if(window._swReg&&window._swReg.active)window._swReg.active.postMessage({type:'SCHEDULE_TIMER',id:'rest',delay:Math.abs(d)*1000,title:'⏱ HYPER LIFE',body:'¡Descanso terminado! A por la siguiente serie.'});}catch(e){}
+    document.getElementById('rtimer').classList.remove('hidden');
+  } else {
+    rtEndTime+=d*1000;
+    if(rtEndTime<Date.now()){rtEndTime=Date.now();}
+    swNotify(rtEndTime-Date.now());
+  }
+  updRT();
+}
+function showPRCat(name,w){const el=document.createElement('div');el.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;animation:vu .3s ease';el.innerHTML=`<div style="font-family:var(--hd);font-size:48px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">🏆 PR!</div><div style="font-size:15px;color:var(--text);margin-bottom:12px;font-family:var(--hd2);text-align:center;padding:0 20px">${name}<br><span style="color:var(--gold);font-size:22px;font-family:var(--mono);font-weight:700">${w}kg</span></div><img src="${CAT_GIFS[Math.floor(Math.random()*CAT_GIFS.length)]}" style="width:160px;height:160px;object-fit:cover;border-radius:16px;border:2px solid var(--gold)"><div style="margin-top:14px;font-size:12px;color:var(--text3);font-family:var(--hd2)">Toca para cerrar</div>`;el.onclick=()=>el.remove();document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}function swNotify(ms){try{if(window._swReg&&window._swReg.active){window._swReg.active.postMessage({type:'SCHEDULE_TIMER',id:'rest',delay:ms,title:'⏱ HYPER LIFE',body:'¡Descanso terminado! A por la siguiente serie.'});}}catch(e){}}function skipRT(){stopRT();}function showExNotesModal(ei){const ex=activeW?.exercises[ei];if(!ex)return;const savedKey='exnote_'+ex.id;const existing=localStorage.getItem(savedKey)||'';document.body.insertAdjacentHTML('beforeend',`<div class="overlay open" id="exnote-ol" onclick="if(event.target===this)document.getElementById('exnote-ol').remove()"><div class="sheet" style="position:relative"><div class="sheet-handle"></div><div class="sheet-title" style="font-size:20px">\ud83d\udcdd Notas: ${ex.name}</div><div style="font-size:11px;color:var(--text2);margin-bottom:12px;font-family:var(--hd2)">Estas notas aparecern cada vez que hagas este ejercicio.</div><textarea class="inp" id="exnote-ta" rows="5" style="resize:vertical;line-height:1.6;font-size:14px;min-height:120px">${existing}</textarea><div style="display:flex;gap:8px;margin-top:12px"><button class="btn bp" style="flex:1" onclick="localStorage.setItem('exnote_'+activeW?.exercises[${ei}]?.id,document.getElementById('exnote-ta').value);document.getElementById('exnote-ol').remove();toast('\u2705 Nota guardada')">Guardar</button><button class="btn bg" onclick="document.getElementById('exnote-ol').remove()">Cancelar</button></div></div></div>`);}
 
 /* FINISH WORKOUT */
 async function finishW(){
@@ -1681,7 +1721,7 @@ async function finishW(){
 }
 
 function showCel(s){
-  document.getElementById('cel-gif').src=GIFS[Math.floor(Math.random()*GIFS.length)];
+  document.getElementById('cel-gif').src=CAT_GIFS[Math.floor(Math.random()*CAT_GIFS.length)];
   document.getElementById('cel-stats').innerHTML=`
     <div class="cel-stat"><span class="cel-val">${fmtDur(s.dur)}</span><span class="cel-lbl">Tiempo</span></div>
     <div class="cel-stat"><span class="cel-val">${s.sc}</span><span class="cel-lbl">Series</span></div>
@@ -2039,9 +2079,9 @@ function renderCalendar(el,sessions){
     const hasSess=daySess.length>0;
     const wasMissed=!isRest&&!hasSess&&date<new Date(now.getFullYear(),now.getMonth(),now.getDate());
     let bg,border,numColor,numWeight='400',extraContent='';
-    if(isToday&&hasSess){bg='rgba(201,170,114,.12)';border='1.5px solid var(--gold)';numColor='var(--gold)';numWeight='800';extraContent='<div style="width:5px;height:5px;border-radius:50%;background:var(--gold);margin-top:2px;box-shadow:0 0 6px var(--gold)"></div>';}
-    else if(hasSess){bg='rgba(201,170,114,.08)';border='1px solid rgba(201,170,114,.35)';numColor='var(--text)';numWeight='700';extraContent='<div style="width:4px;height:4px;border-radius:50%;background:var(--gold);margin-top:2px"></div>';}
-    else if(isToday){bg='rgba(201,170,114,.07)';border='1.5px solid rgba(201,170,114,.4)';numColor='var(--gold)';numWeight='800';extraContent='<div style="font-size:6px;color:var(--gold);font-weight:800;margin-top:1px;font-family:var(--hd2)">HOY</div>';}
+    if(isToday&&hasSess){bg='rgba(200,200,200,.12)';border='1.5px solid var(--gold)';numColor='var(--gold)';numWeight='800';extraContent='<div style="width:5px;height:5px;border-radius:50%;background:var(--gold);margin-top:2px;box-shadow:0 0 6px var(--gold)"></div>';}
+    else if(hasSess){bg='rgba(200,200,200,.08)';border='1px solid rgba(200,200,200,.35)';numColor='var(--text)';numWeight='700';extraContent='<div style="width:4px;height:4px;border-radius:50%;background:var(--gold);margin-top:2px"></div>';}
+    else if(isToday){bg='rgba(200,200,200,.07)';border='1.5px solid rgba(200,200,200,.4)';numColor='var(--gold)';numWeight='800';extraContent='<div style="font-size:6px;color:var(--gold);font-weight:800;margin-top:1px;font-family:var(--hd2)">HOY</div>';}
     else if(!isRest&&!hasSess&&date>=now){bg='rgba(255,255,255,.015)';border='1px dashed rgba(255,255,255,.06)';numColor='var(--text2)';extraContent='';}
     else{bg='transparent';border='1px solid transparent';numColor='var(--text3)';}
     let onclick=hasSess?`onclick="openDayDetail('${key}')"`:'';
@@ -2331,7 +2371,7 @@ ${customExCount?`<div class="sett-row" onclick="manageCustomEx()">
 <!-- FOOTER BRAND -->
 <div style="text-align:center;padding:44px 20px;margin-top:8px;position:relative">
   <div style="position:absolute;top:24px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--gold2),.15),transparent)"></div>
-  <div style="font-family:var(--hd);font-size:60px;letter-spacing:6px;line-height:0.9;background:linear-gradient(135deg,rgba(201,170,114,.4),rgba(201,170,114,.15));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">HYPER<br>LIFE</div>
+  <div style="font-family:var(--hd);font-size:60px;letter-spacing:6px;line-height:0.9;background:linear-gradient(135deg,rgba(200,200,200,.4),rgba(200,200,200,.15));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text"><svg width="70" height="50" viewBox="0 0 70 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 6px;display:block;filter:drop-shadow(0 0 15px rgba(200,200,200,.6))"><rect x="10" y="21" width="50" height="8" rx="4" fill="url(#dg1)"/><rect x="2" y="16" width="12" height="18" rx="6" fill="url(#dg1)"/><rect x="56" y="16" width="12" height="18" rx="6" fill="url(#dg1)"/><rect x="14" y="19" width="6" height="12" rx="3" fill="url(#dg2)"/><rect x="50" y="19" width="6" height="12" rx="3" fill="url(#dg2)"/><defs><linearGradient id="dg1" x1="0" y1="0" x2="70" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#C8C8C8"/><stop offset="1" stop-color="#555555"/></linearGradient><linearGradient id="dg2" x1="0" y1="0" x2="70" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#C8C8C8"/><stop offset="1" stop-color="#1A1A1A"/></linearGradient></defs></svg>HYPER<br>LIFE</div>
   <div style="font-family:var(--hd2);font-size:9px;letter-spacing:4px;color:var(--text3);margin-top:8px;text-transform:uppercase">Laboratorio de Hipertrofia · Solo para Jaime 👑</div>
 </div>`;
 }
@@ -2356,7 +2396,7 @@ function calc1RM(){
 function est1RM(w,r){return w*(1+r/30);}
 
 /* ACCENT */
-async function setAcc(v,r){applyAccent(v,r);await sset('accent',{v,r});renderSettings();}
+async function setAcc(v,r){applyAccent(v,r);await sset('accent',{v,r});renderSettings();}function setBG(v){const r=parseInt(v.slice(1,3),16),g2=parseInt(v.slice(3,5),16),b2=parseInt(v.slice(5,7),16);document.documentElement.style.setProperty('--bg0',v);document.documentElement.style.setProperty('--bg1',`rgb(${r+3},${g2+3},${b2+10})`);document.documentElement.style.setProperty('--bg2',`rgb(${r+7},${g2+7},${b2+15})`);document.documentElement.style.setProperty('--bg3',`rgb(${r+12},${g2+12},${b2+22})`);document.documentElement.style.setProperty('--bg4',`rgb(${r+20},${g2+20},${b2+35})`);lsSet('bgColor',v);}
 async function setAccCust(v){
   const r=`${parseInt(v.slice(1,3),16)},${parseInt(v.slice(3,5),16)},${parseInt(v.slice(5,7),16)}`;
   applyAccent(v,r);await sset('accent',{v,r});
