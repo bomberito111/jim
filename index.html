@@ -1228,7 +1228,7 @@ function getAllEx(){return Object.values(ROUTINE).flatMap(d=>d.exercises||[]);}
    BOOT
 ═══════════════════════════════════════════════ */
 async function boot(){
-  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});if(Notification.permission==='default')Notification.requestPermission();if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r;console.log('[SW] ok');}).navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='TIMER_FIRED'&&e.data?.id==='rest'){stopKeepalive();releaseWakeLock();}});catch(e=>console.warn('[SW] fail',e));}
+  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});if(Notification.permission==='default')Notification.requestPermission();if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r;console.log('[SW] ok');;navigator.serviceWorker.addEventListener(('message',e=>{if(e.data?.type==='TIMER_FIRED'&&e.data?.id==='rest'){stopKeepalive();releaseWakeLock();}}).catch(e=>console.warn('[SW] fail',e));}
   loadRoutine();
   const acc=lsGet('accent');
   if(acc) applyAccent(acc.v,acc.r);
