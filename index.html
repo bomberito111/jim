@@ -2,9 +2,6 @@
 <html lang="es">
 <head>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,6 +13,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════════
@@ -697,6 +696,113 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 /* SECTION DIVIDER */
 .sec-hd{font-family:var(--hd);font-size:20px;letter-spacing:.5px;color:var(--text2);margin-bottom:10px;margin-top:4px}
 
+/* CALENDAR */
+.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;cursor:default;transition:all .15s;padding:2px}
+</style>
+</head>
+<body>
+
+<div style="position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none">
+  <div id="sync-bar-fill"></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- CELEBRATION -->
+<div id="cel">
+  <div class="cel-title">LISTO!</div>
+  <div class="cel-sub" id="cel-sub">Así se construye músculo 💪</div>
+  <img id="cel-gif" class="cel-gif" src="" alt="">
+  <div class="cel-stats" id="cel-stats"></div>
+  <button class="btn bp btn-w" style="max-width:300px;margin-bottom:10px" onclick="closeCel()">Ver resumen →</button>
+  <button class="btn bg btn-w" style="max-width:300px" onclick="closeCelEdit()">✏️ Ajustar rutina</button>
+</div>
+
+<!-- REST TIMER -->
+<div id="rtimer" class="hidden">
+  <div class="rt-left">
+    <span class="rt-lbl">⏱ Descanso</span>
+    <span class="rt-cnt" id="rtdisp">2:00</span>
+  </div>
+  <div class="rt-btns">
+    <button class="rt-btn" onclick="adjRT(-30)">−30s</button>
+    <button class="rt-btn" onclick="adjRT(+30)">+30s</button>
+    <button class="rt-btn rt-skip" onclick="skipRT()">Skip</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div id="views">
+    <div id="v-home" class="view"></div>
+    <div id="v-workout" style="display:none"></div>
+    <div id="v-progress" class="view" style="display:none"></div>
+    <div id="v-body" class="view" style="display:none"></div>
+    <div id="v-settings" class="view" style="display:none"></div>
+  </div>
+  <nav id="nav">
+    <button class="ni on" id="ni-home" onclick="nav('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inicio
+    </button>
+    <button class="ni" id="ni-workout" onclick="nav('workout')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      Workout
+    </button>
+    <button class="ni" id="ni-progress" onclick="nav('progress')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Progreso
+    </button>
+    <button class="ni" id="ni-body" onclick="nav('body')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="5" r="3"/><path d="M12 8v5M9 19l3-6 3 6M7 19h10M9 12H7M15 12h2"/></svg>
+      Cuerpo
+    </button>
+    <button class="ni" id="ni-settings" onclick="nav('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Ajustes
+    </button>
+  </nav>
+</div>
+
+<!-- FIREBASE INIT -->
+<script>
+(function(){
+  try {
+    firebase.initializeApp({
+      apiKey: "AIzaSyCL5VqDiXUwQo" + "0XLYWV7RZzHleM_9hYcwA",
+      authDomain: "hyper-life-b9819.firebaseapp.com",
+      projectId: "hyper-life-b9819",
+      storageBucket: "hyper-life-b9819.firebasestorage.app",
+      messagingSenderId: "827615869989",
+      appId: "1:827615869989:web:9459ebdc3dc4ec892b13cc"
+    });
+    var _db = firebase.firestore();
+    window.FB_DB = _db;
+    window.FB = {
+      doc: function(db, col, id){ return db.collection(col).doc(id); },
+      setDoc: function(ref, data){ return ref.set(data); },
+      getDoc: function(ref){ return ref.get().then(function(s){ return { exists: function(){ return s.exists; }, data: function(){ return s.data(); } }; }); },
+      onSnapshot: function(ref, cb){ return ref.onSnapshot(function(s){ cb({ exists: function(){ return s.exists; }, data: function(){ return s.data(); } }); }); }
+    };
+    window.FB_READY = true;
+    console.log('Firebase listo');
+    window.dispatchEvent(new Event('firebase-ready'));
+  } catch(e) {
+    console.warn('Firebase init failed:', e);
+  }
+})();
+</script>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════
+   DEFAULT ROUTINE
+═══════════════════════════════════════════════ */
+const DEFAULT_ROUTINE = {
+  1:{name:'ESPALDA & BÍCEPS',emoji:'💪',color:'#4361EE',exercises:[
+    {id:'e01',g:'Espalda',name:'Jalón unilateral desde arriba',sets:4,rMin:8,rMax:12,rest:120,type:'iso',
      notes:'Conexión mente-músculo, estiramiento completo. Codo pegado al cuerpo al bajar.',
      muscles:['Dorsal ancho','Redondo mayor','Bíceps (asistente)'],
      steps:['Agarra la polea alta con una mano, palma mirando hacia ti','Siéntate con el brazo completamente extendido hacia arriba','Lleva el codo hacia la cadera tirando del cable, no del hombro','Aprieta el dorsal 1 segundo en la posición baja','Sube el brazo lento en 2-3 segundos sin perder tensión'],
