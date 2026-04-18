@@ -700,6 +700,16 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 <body>
 
 <!-- FIREBASE SDK -->
+<script>
+  // OJO DE DIAGNÓSTICO: Muestra errores en pantalla
+  window.onerror = function(msg, url, line, col, error) {
+    var div = document.createElement('div');
+    div.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:99999;background:red;color:white;padding:10px;font-size:12px;word-break:break-all';
+    div.innerHTML = '⚠️ ERROR DETECTADO: ' + msg + ' en ' + url + ' L:' + line;
+    document.body.appendChild(div);
+    return false;
+  };
+</script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc, query, orderBy, serverTimestamp, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
