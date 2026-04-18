@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -860,9 +861,9 @@ async function initSync(){
     // Si había un workout local activo, lo restauramos (tiene prioridad sobre el Gist)
     if(currentWK) localStorage.setItem(WK_KEY, currentWK);
     lsSet('_last_sync',remote.last_updated);
-    console.log('[HYPER] ☁ Datos cargados desde Gist');
+     // blindado ('[HYPER] ☁ Datos cargados desde Gist');
   } else if(localDate>remoteDate && localDate>0){
-    console.log('[HYPER] ↑ Subiendo datos locales al Gist...');
+     // blindado ('[HYPER] ↑ Subiendo datos locales al Gist...');
     await syncNow();
   } else {
     setSyncUI('ok');

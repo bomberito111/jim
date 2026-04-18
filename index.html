@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -731,7 +732,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
   window.FB_DB = db;
   window.FB = { doc, setDoc, getDoc, onSnapshot, collection, addDoc, query, orderBy, serverTimestamp, deleteDoc, getDocs };
   window.FB_READY = true;
-  console.log("Firebase listo");
+   // blindado ("Firebase listo");
   window.dispatchEvent(new Event('firebase-ready'));
 <div style="position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none">
   <div id="sync-bar-fill"></div>
@@ -1076,7 +1077,7 @@ function fbListen(){
         applyState(remote);
         if(curWK) localStorage.setItem(WK_KEY, curWK);
         lsSet('_last_sync', remote.last_updated);
-        console.log('[FB] 🔄 realtime update applied');
+         // blindado ('[FB] 🔄 realtime update applied');
         if(curView==='home') renderHome();
         else if(curView==='progress') renderProgress();
         setSyncUI('ok');
@@ -1112,9 +1113,9 @@ async function initSync(){
     applyState(remote);
     if(curWK) localStorage.setItem(WK_KEY, curWK);
     lsSet('_last_sync', remote.last_updated);
-    console.log('[FB] ☁ cloud data applied');
+     // blindado ('[FB] ☁ cloud data applied');
   } else {
-    console.log('[FB] ↑ pushing local data');
+     // blindado ('[FB] ↑ pushing local data');
     await fbWrite();
   }
   fbListen(); // subscribe to realtime updates after initial sync
@@ -1236,7 +1237,7 @@ function getAllEx(){return Object.values(ROUTINE).flatMap(d=>d.exercises||[]);}
    BOOT
 ═══════════════════════════════════════════════ */
 async function boot(){
-  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});if(Notification.permission==='default')Notification.requestPermission();if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r;console.log('[SW] ok');navigator.serviceWorker.addEventListener('message','message',e=>{if(e.data?.type==='TIMER_FIRED'&&e.data?.id==='rest'){stopKeepalive();releaseWakeLock();}});}).catch(e=>console.warn('[SW] fail',e));}
+  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});if(Notification.permission==='default')Notification.requestPermission();if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r; // blindado ('[SW] ok');navigator.serviceWorker.addEventListener('message','message',e=>{if(e.data?.type==='TIMER_FIRED'&&e.data?.id==='rest'){stopKeepalive();releaseWakeLock();}});}).catch(e=>console.warn('[SW] fail',e));}
   loadRoutine();
   const acc=lsGet('accent');
   if(acc) applyAccent(acc.v,acc.r);
