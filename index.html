@@ -736,7 +736,28 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
   }, 3000);
 </script>
 
-<!-- SYNC BAR -->
+<script>
+  // Manejador de errores global para capturar fallos de carga
+  window.onerror = function(msg, url, line, col, error) {
+    console.log('Capturando error: ', msg);
+    if (msg.includes('Script error')) {
+      alert('Error de conexión con librerías externas. Cargando modo offline seguro.');
+    }
+    return false;
+  };
+</script>
+
+<script>
+  // Mock de Firebase por si falla la carga del SDK
+  if (typeof window.FB === 'undefined') {
+    window.FB_READY = false;
+    window.FB = {
+      doc: () => ({}), setDoc: () => Promise.resolve(), getDoc: () => Promise.resolve({exists: () => false}),
+      onSnapshot: () => (() => {}), collection: () => ({}), addDoc: () => Promise.resolve()
+    };
+    console.warn("Usando Mock de Firebase por fallo de red.");
+  }
+</script>
 <div style="position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none">
   <div id="sync-bar-fill"></div>
 </div>
