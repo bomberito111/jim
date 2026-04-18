@@ -2,6 +2,9 @@
 <html lang="es">
 <head>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -702,15 +705,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 
 <!-- FIREBASE SDK -->
 <script>
-  // OJO DE DIAGNÓSTICO: Muestra errores en pantalla
-  window.onerror = function(msg, url, line, col, error) {
-    var div = document.createElement('div');
-    div.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:99999;background:red;color:white;padding:10px;font-size:12px;word-break:break-all';
-    div.innerHTML = '⚠️ ERROR DETECTADO: ' + msg + ' en ' + url + ' L:' + line;
-    document.body.appendChild(div);
-    return false;
-  };
-</script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc, query, orderBy, serverTimestamp, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -734,6 +728,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
   window.FB_READY = true;
    // blindado ("Firebase listo");
   window.dispatchEvent(new Event('firebase-ready'));
+</script>
 <div style="position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none">
   <div id="sync-bar-fill"></div>
 </div>
