@@ -721,7 +721,19 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
   window.FB_DB = db;
   window.FB = { doc, setDoc, getDoc, onSnapshot, collection, addDoc, query, orderBy, serverTimestamp, deleteDoc, getDocs };
   window.FB_READY = true;
+  console.log("Firebase listo");
   window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<script>
+  // FAIL-SAFE: Si en 3 segundos Firebase no responde, forzar carga local
+  setTimeout(() => {
+    if (!window.FB_READY) {
+      console.warn("Firebase lento o bloqueado. Cargando modo local...");
+      window.FB_READY = false; 
+      window.dispatchEvent(new Event('firebase-ready'));
+    }
+  }, 3000);
 </script>
 
 <!-- SYNC BAR -->
