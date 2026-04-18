@@ -1,0 +1,27 @@
+async function fbWrite() {
+  if (_syncing || !GIST_TOKEN) return;
+  _syncing = true;
+  setSyncUI('syncing');
+  try {
+    const state = packState();
+    const res = await fetch(GIST_API, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${GIST_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        files: { [GIST_FILE]: { content: JSON.stringify(state) } }
+      })
+    });
+    if (res.ok) {
+      setSyncUI('ok');
+      lsSet('_last_sync', Date.now());
+    } else {
+      setSyncUI('error');
+    }
+  } catch (e) {
+    setSyncUI('error');
+  }
+  _syncing = false;
+}
