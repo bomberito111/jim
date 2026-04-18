@@ -2,9 +2,6 @@
 <html lang="es">
 <head>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://media.giphy.com https://avatars.githubusercontent.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.github.com https://*.supabase.co;">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,8 +11,10 @@
 <title>HYPER LIFE — Jaime</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-e6nUZLBkQ86NJ6TVVKAeSaK8jWa3NhkYWZFomE39AvDbQWeie9PlQqM3pmYW5d1g" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js" integrity="sha384-ViccRjS0k/lvYsrtaKXk+ES61/4PAZlFI/mPHmLC1YWzK0AIbXbI5ZXDzcm3F8gH" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" integrity="sha384-7TetnPNdXXu6qURzIEXWCwpXedGGBJSXIR5Cv0gOWTB34UD5TxPHx33PhjA6wFQ3" crossorigin="anonymous"></script>
 
 <style>
 /* ═══════════════════════════════════════════════
@@ -703,40 +702,35 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 </head>
 <body>
 
-<!-- FIREBASE SDK -->
+<!-- FIREBASE INIT -->
 <script>
-  // OJO DE DIAGNÓSTICO: Muestra errores en pantalla
-  window.onerror = function(msg, url, line, col, error) {
-    var div = document.createElement('div');
-    div.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:99999;background:red;color:white;padding:10px;font-size:12px;word-break:break-all';
-    div.innerHTML = '⚠️ ERROR DETECTADO: ' + msg + ' en ' + url + ' L:' + line;
-    document.body.appendChild(div);
-    return false;
-  };
+(function(){
+  try {
+    firebase.initializeApp({
+      apiKey: "AIzaSyCL5VqDiXUwQo" + "0XLYWV7RZzHleM_9hYcwA",
+      authDomain: "hyper-life-b9819.firebaseapp.com",
+      projectId: "hyper-life-b9819",
+      storageBucket: "hyper-life-b9819.firebasestorage.app",
+      messagingSenderId: "827615869989",
+      appId: "1:827615869989:web:9459ebdc3dc4ec892b13cc"
+    });
+    var _db = firebase.firestore();
+    window.FB_DB = _db;
+    window.FB = {
+      doc: function(db, col, id){ return db.collection(col).doc(id); },
+      setDoc: function(ref, data){ return ref.set(data); },
+      getDoc: function(ref){ return ref.get().then(function(s){ return { exists: function(){ return s.exists; }, data: function(){ return s.data(); } }; }); },
+      onSnapshot: function(ref, cb){ return ref.onSnapshot(function(s){ cb({ exists: function(){ return s.exists; }, data: function(){ return s.data(); } }); }); }
+    };
+    window.FB_READY = true;
+    console.log('Firebase listo');
+    window.dispatchEvent(new Event('firebase-ready'));
+  } catch(e) {
+    console.warn('Firebase init failed:', e);
+  }
+})();
 </script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc, query, orderBy, serverTimestamp, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCL5VqDiXUwQo" + "0XLYWV7RZzHleM_9hYcwA",
-    authDomain: "hyper-life-b9819.firebaseapp.com",
-    projectId: "hyper-life-b9819",
-    storageBucket: "hyper-life-b9819.firebasestorage.app",
-    messagingSenderId: "827615869989",
-    appId: "1:827615869989:web:9459ebdc3dc4ec892b13cc",
-    measurementId: "G-T9KM90S34C"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // ─── Expose Firebase to global scope ───
-  window.FB_DB = db;
-  window.FB = { doc, setDoc, getDoc, onSnapshot, collection, addDoc, query, orderBy, serverTimestamp, deleteDoc, getDocs };
-  window.FB_READY = true;
-   // blindado ("Firebase listo");
-  window.dispatchEvent(new Event('firebase-ready'));
 <div style="position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none">
   <div id="sync-bar-fill"></div>
 </div>
@@ -802,6 +796,14 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 
 <script>
 'use strict';
+
+/* ═══════════════════════════════════════════════
+   SECURITY UTILS
+═══════════════════════════════════════════════ */
+function escHtml(s){
+  if(s==null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 /* ═══════════════════════════════════════════════
    DEFAULT ROUTINE
@@ -1370,8 +1372,8 @@ async function renderHome(){
     const h=await exhist(ex.id);
     const ls=h.slice(-1)[0]?.sets?.[0];
     exPreviews+=`<div class="ex-prev">
-      <div><div class="ex-prev-name">${ex.name}</div>
-      <div class="ex-prev-meta">${ex.g} · ${ex.sets}×${ex.rMin}-${ex.rMax} · ${ex.rest}s</div></div>
+      <div><div class="ex-prev-name">${escHtml(ex.name)}</div>
+      <div class="ex-prev-meta">${escHtml(ex.g)} · ${ex.sets}×${ex.rMin}-${ex.rMax} · ${ex.rest}s</div></div>
       ${ls?`<div class="ex-prev-last">${ls.w}kg×${ls.r}</div>`:'<span class="tag tmu" style="font-size:9px">NUEVO</span>'}
     </div>`;
   }
@@ -1454,7 +1456,7 @@ ${recent.length?`
 <div style="margin-top:6px">
   <div class="sec-hd">ÚLTIMAS SESIONES</div>
   ${recent.map(s=>`<div class="sess-item">
-    <div class="sess-left"><h4>${s.emoji||''}${s.rn}</h4>
+    <div class="sess-left"><h4>${escHtml(s.emoji||'')}${escHtml(s.rn)}</h4>
     <p>${new Date(s.date).toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short'})} · ${s.sc||0} series</p></div>
     <div class="sess-right">
       <div class="sess-vol">${Math.round((s.vol||0)/100)/10}k kg</div>
@@ -1527,7 +1529,7 @@ function renderWorkout(){
     const allDone=ex.sets.every(s=>s.done);
     html+=`<div class="exb${allDone?' done-ex':''}" id="exb-${ei}">
       <div class="exb-header">
-        <div class="exb-name">${ex.name}</div>
+        <div class="exb-name">${escHtml(ex.name)}</div>
         <button class="exb-info-btn" onclick="showExInfo(${ei})">ℹ Técnica</button><button class="exb-info-btn" style="background:rgba(244,160,35,.1);color:var(--amber);border-color:rgba(244,160,35,.2);margin-left:4px" onclick="showExNotesModal(${ei})">📝 Notas</button>
       </div>
       <div class="exb-meta">
@@ -1716,7 +1718,7 @@ function stopKeepalive(){clearInterval(_kaIval);_kaIval=null;}
 let _wakeLock=null;
 async function acquireWakeLock(){try{if('wakeLock' in navigator){_wakeLock=await navigator.wakeLock.request('screen');_wakeLock.addEventListener('release',()=>{_wakeLock=null;});}}catch(e){}}
 function releaseWakeLock(){try{if(_wakeLock){_wakeLock.release();_wakeLock=null;}}catch(e){}}
-function showPRCat(name,w){const el=document.createElement('div');el.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;animation:vu .3s ease';el.innerHTML=`<div style="font-family:var(--hd);font-size:48px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">🏆 PR!</div><div style="font-size:15px;color:var(--text);margin-bottom:12px;font-family:var(--hd2);text-align:center;padding:0 20px">${name}<br><span style="color:var(--gold);font-size:22px;font-family:var(--mono);font-weight:700">${w}kg</span></div><img src="${CAT_GIFS[Math.floor(Math.random()*CAT_GIFS.length)]}" style="width:160px;height:160px;object-fit:cover;border-radius:16px;border:2px solid var(--gold)"><div style="margin-top:14px;font-size:12px;color:var(--text3);font-family:var(--hd2)">Toca para cerrar</div>`;el.onclick=()=>el.remove();document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}function swNotify(ms){try{if(window._swReg&&window._swReg.active){window._swReg.active.postMessage({type:'SCHEDULE_TIMER',id:'rest',delay:ms,title:'⏱ HYPER LIFE',body:'¡Descanso terminado! A por la siguiente serie.'});}}catch(e){}}function skipRT(){stopRT();}function showExNotesModal(ei){const ex=activeW?.exercises[ei];if(!ex)return;const savedKey='exnote_'+ex.id;const existing=localStorage.getItem(savedKey)||'';document.body.insertAdjacentHTML('beforeend',`<div class="overlay open" id="exnote-ol" onclick="if(event.target===this)document.getElementById('exnote-ol').remove()"><div class="sheet" style="position:relative"><div class="sheet-handle"></div><div class="sheet-title" style="font-size:20px">\ud83d\udcdd Notas: ${ex.name}</div><div style="font-size:11px;color:var(--text2);margin-bottom:12px;font-family:var(--hd2)">Estas notas aparecern cada vez que hagas este ejercicio.</div><textarea class="inp" id="exnote-ta" rows="5" style="resize:vertical;line-height:1.6;font-size:14px;min-height:120px">${existing}</textarea><div style="display:flex;gap:8px;margin-top:12px"><button class="btn bp" style="flex:1" onclick="localStorage.setItem('exnote_'+activeW?.exercises[${ei}]?.id,document.getElementById('exnote-ta').value);document.getElementById('exnote-ol').remove();toast('\u2705 Nota guardada')">Guardar</button><button class="btn bg" onclick="document.getElementById('exnote-ol').remove()">Cancelar</button></div></div></div>`);}
+function showPRCat(name,w){const el=document.createElement('div');el.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;animation:vu .3s ease';el.innerHTML=`<div style="font-family:var(--hd);font-size:48px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">🏆 PR!</div><div style="font-size:15px;color:var(--text);margin-bottom:12px;font-family:var(--hd2);text-align:center;padding:0 20px">${escHtml(name)}<br><span style="color:var(--gold);font-size:22px;font-family:var(--mono);font-weight:700">${escHtml(w)}kg</span></div><img src="${escHtml(CAT_GIFS[Math.floor(Math.random()*CAT_GIFS.length)])}" style="width:160px;height:160px;object-fit:cover;border-radius:16px;border:2px solid var(--gold)"><div style="margin-top:14px;font-size:12px;color:var(--text3);font-family:var(--hd2)">Toca para cerrar</div>`;el.onclick=()=>el.remove();document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}function swNotify(ms){try{if(window._swReg&&window._swReg.active){window._swReg.active.postMessage({type:'SCHEDULE_TIMER',id:'rest',delay:ms,title:'⏱ HYPER LIFE',body:'¡Descanso terminado! A por la siguiente serie.'});}}catch(e){}}function skipRT(){stopRT();}function showExNotesModal(ei){const ex=activeW?.exercises[ei];if(!ex)return;const savedKey='exnote_'+ex.id;const existing=localStorage.getItem(savedKey)||'';const ol=document.createElement('div');ol.className='overlay open';ol.id='exnote-ol';ol.onclick=function(e){if(e.target===ol)ol.remove();};const sheet=document.createElement('div');sheet.className='sheet';sheet.style.position='relative';const title=document.createElement('div');title.className='sheet-title';title.style.fontSize='20px';title.textContent='📝 Notas: '+ex.name;const hint=document.createElement('div');hint.style.cssText='font-size:11px;color:var(--text2);margin-bottom:12px;font-family:var(--hd2)';hint.textContent='Estas notas aparecerán cada vez que hagas este ejercicio.';const ta=document.createElement('textarea');ta.className='inp';ta.id='exnote-ta';ta.rows=5;ta.style.cssText='resize:vertical;line-height:1.6;font-size:14px;min-height:120px';ta.value=existing;const btns=document.createElement('div');btns.style.cssText='display:flex;gap:8px;margin-top:12px';const bSave=document.createElement('button');bSave.className='btn bp';bSave.style.flex='1';bSave.textContent='Guardar';bSave.onclick=function(){const id=activeW?.exercises[ei]?.id;if(id)localStorage.setItem('exnote_'+id,ta.value);ol.remove();toast('✅ Nota guardada');};const bCan=document.createElement('button');bCan.className='btn bg';bCan.textContent='Cancelar';bCan.onclick=function(){ol.remove();};btns.appendChild(bSave);btns.appendChild(bCan);sheet.appendChild(document.createElement('div')).className='sheet-handle';sheet.appendChild(title);sheet.appendChild(hint);sheet.appendChild(ta);sheet.appendChild(btns);ol.appendChild(sheet);document.body.appendChild(ol);}
 
 /* FINISH WORKOUT */
 async function finishW(){
@@ -1785,10 +1787,10 @@ function showExInfo(ei){
       <div class="sheet" style="position:relative">
         <div class="sheet-handle"></div>
         <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
-          <span class="tag tac">${ex.g}</span>
+          <span class="tag tac">${escHtml(ex.g)}</span>
           <span class="tag ${ex.type==='comp'?'trd':'tpu'}">${ex.type==='comp'?'⚡ Compuesto':'○ Aislamiento'}</span>
         </div>
-        <div class="sheet-title">${ex.name}</div>
+        <div class="sheet-title">${escHtml(ex.name)}</div>
         <div style="font-size:11px;color:var(--text2);margin-bottom:16px;font-family:var(--hd2)">${ex.sets?.length||ex.sets||3}×${ex.rMin}-${ex.rMax} reps · ${ex.rest}s descanso</div>
         ${musclesHtml?`<div style="margin-bottom:14px"><div class="lbl" style="margin-bottom:6px">Músculos</div>${musclesHtml}</div>`:''}
         ${ex.notes?`<div class="ex-note-box">💡 ${ex.notes}</div>`:''}
@@ -1837,8 +1839,8 @@ function renderREInner(){
     return `<div class="re-ex-card" id="re-ex-${i}">
       <div class="re-ex-top">
         <div>
-          <div class="re-ex-name">${ex.name}</div>
-          <div style="font-size:10px;color:var(--text3);margin-top:2px;font-family:var(--hd2)">${ex.g}${isCustom?' · <span style="color:var(--purple)">Personalizado</span>':''}</div>
+          <div class="re-ex-name">${escHtml(ex.name)}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px;font-family:var(--hd2)">${escHtml(ex.g)}${isCustom?' · <span style="color:var(--purple)">Personalizado</span>':''}</div>
         </div>
         <div class="re-ex-btns">
           ${i>0?`<button class="re-icon-btn" onclick="reMove(${i},-1)">↑</button>`:''}
