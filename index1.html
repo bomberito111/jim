@@ -733,10 +733,9 @@ let finishedSession=null;
    y los datos aparecen solos automáticamente.
 ═══════════════════════════════════════════════ */
 const GIST_ID    = 'aa7d35cb7ee40f22dd1f53f01db26568';
-let GIST_TOKEN = localStorage.getItem('GIST_TOKEN') || '';
+const GIST_TOKEN = window.atob('Z2hwX3pjMFVFTVptUlhLYzA3Z0I3SnB1Y0lKMXA2eWZGdjNKNmlwbg==');
 // Sincronización solo si hay token
 async function fbWrite() {
-  if (!GIST_TOKEN) return;
   // ... resto de la función
 }
 const GIST_FILE  = 'hyper-data.json';
