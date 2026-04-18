@@ -723,13 +723,6 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
   window.FB_READY = true;
   console.log("Firebase listo");
   window.dispatchEvent(new Event('firebase-ready'));
-</script>
-<script>
-      doc: () => ({}), setDoc: () => Promise.resolve(), getDoc: () => Promise.resolve({exists: () => false}),
-      onSnapshot: () => (() => {}), collection: () => ({}), addDoc: () => Promise.resolve()
-    };
-  }
-</script>
 <div style="position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none">
   <div id="sync-bar-fill"></div>
 </div>
