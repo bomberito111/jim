@@ -1077,7 +1077,7 @@ function fbListen(){
         if(curWK) localStorage.setItem(WK_KEY, curWK);
         lsSet('_last_sync', remote.last_updated);
         console.log('[FB] 🔄 realtime update applied');
-        if(curView==='home') renderHome();
+        if(curView==='home') window.addEventListener("DOMContentLoaded", renderHome);
         else if(curView==='progress') renderProgress();
         setSyncUI('ok');
       }
@@ -1172,7 +1172,7 @@ function importJSON(){
       try{
         const d=JSON.parse(ev.target.result);
         if(!d.sessions&&!d.exercises){toast('⚠️ Archivo inválido');return;}
-        applyState(d);loadRoutine();renderHome();
+        applyState(d);loadRoutine();window.addEventListener("DOMContentLoaded", renderHome);
         syncNow();
         toast('✅ Datos restaurados y sincronizados');renderSettings();
       }catch(err){toast('❌ Error: '+err.message);}
@@ -1251,12 +1251,12 @@ async function boot(){
     return;
   }
 
-  await renderHome();
+  await window.addEventListener("DOMContentLoaded", renderHome);
 
   initSync().then(ok=>{
     if(ok){
       loadRoutine();
-      if(curView==='home') renderHome();
+      if(curView==='home') window.addEventListener("DOMContentLoaded", renderHome);
       else if(curView==='progress') renderProgress();
     }
   });
@@ -1287,7 +1287,7 @@ function nav(v){
   });
   document.getElementById('views').scrollTop=0;
   curView=v;saveView(v);
-  if(v==='home') renderHome();
+  if(v==='home') window.addEventListener("DOMContentLoaded", renderHome);
   else if(v==='workout') renderWorkout();
   else if(v==='progress') renderProgress();
   else if(v==='body') renderBody();
@@ -1460,7 +1460,7 @@ ${recent.length?`
 </div>`:''}`;
 }
 
-function selDay(d){curDay=d;renderHome();}
+function selDay(d){curDay=d;window.addEventListener("DOMContentLoaded", renderHome);}
 
 /* ═══════════════════════════════════════════════
    WORKOUT PLAYER
@@ -1880,7 +1880,7 @@ function reMove(i,dir){
 function reDelete(i){ROUTINE[reDay].exercises.splice(i,1);renderREInner();}
 function saveRoutineEditor(){
   saveRoutine();toast('✅ Rutina guardada');
-  document.getElementById('re-ol')?.remove();renderHome();
+  document.getElementById('re-ol')?.remove();window.addEventListener("DOMContentLoaded", renderHome);
 }
 function resetRoutineConfirm(){
   document.body.insertAdjacentHTML('beforeend',`
@@ -2205,7 +2205,7 @@ async function deleteSession(idx){
   sessions.splice(idx,1);lsSet('sessions',sessions);
   await fbWrite();
   toast('🗑 Entrenamiento eliminado');
-  renderProgress();renderHome();
+  renderProgress();window.addEventListener("DOMContentLoaded", renderHome);
 }
 
 /* ═══════════════════════════════════════════════
@@ -2368,7 +2368,7 @@ ${customExCount?`<div class="sett-row" onclick="manageCustomEx()">
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
     <button class="btn bg bsm" onclick="syncNow().then(ok=>toast(ok?'☁ Sincronizado!':'⚠ Error'))">⟳ Sync ahora</button>
-    <button class="btn bg bsm" onclick="fbRead().then(r=>{if(r){const curWK=localStorage.getItem(WK_KEY);applyState(r);if(curWK)localStorage.setItem(WK_KEY,curWK);loadRoutine();renderHome();toast('📥 Datos restaurados');}else toast('❌ Sin conexión')})">↓ Restaurar nube</button>
+    <button class="btn bg bsm" onclick="fbRead().then(r=>{if(r){const curWK=localStorage.getItem(WK_KEY);applyState(r);if(curWK)localStorage.setItem(WK_KEY,curWK);loadRoutine();window.addEventListener("DOMContentLoaded", renderHome);toast('📥 Datos restaurados');}else toast('❌ Sin conexión')})">↓ Restaurar nube</button>
   </div>
 </div>
 
@@ -2529,7 +2529,7 @@ function doImportRoutineExcel(){
           newR[dia].exercises.push({id:'xi_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name:r[3]||'',g:r[4]||'',sets:parseInt(r[5])||3,rMin:parseInt(r[6])||8,rMax:parseInt(r[7])||12,rest:parseInt(r[8])||90,type:r[9]||'iso',notes:r[10]||'',muscles:[r[4]||''],steps:[],cues:'',video:''});
         });
         ROUTINE=newR;saveRoutine();
-        toast('✅ Rutina importada');renderHome();
+        toast('✅ Rutina importada');window.addEventListener("DOMContentLoaded", renderHome);
       }catch(err){toast('Error: '+err.message);}
     };
     reader.readAsBinaryString(f);
