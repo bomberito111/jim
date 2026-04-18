@@ -733,7 +733,11 @@ let finishedSession=null;
    y los datos aparecen solos automáticamente.
 ═══════════════════════════════════════════════ */
 const GIST_ID    = 'aa7d35cb7ee40f22dd1f53f01db26568';
-const GIST_TOKEN = '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';
+let GIST_TOKEN = localStorage.getItem('GIST_TOKEN');
+if (!GIST_TOKEN) {
+    GIST_TOKEN = prompt("Seguridad: Ingresa tu GitHub Token para sincronizar:");
+    if (GIST_TOKEN) localStorage.setItem('GIST_TOKEN', GIST_TOKEN);
+}
 const GIST_FILE  = 'hyper-data.json';
 const GIST_API   = `https://api.github.com/gists/${GIST_ID}`;
 const LS_PFX     = 'h4_';
