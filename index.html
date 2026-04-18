@@ -726,26 +726,9 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 </script>
 
 <script>
-  // FAIL-SAFE: Si en 3 segundos Firebase no responde, forzar carga local
-  setTimeout(() => { if(false)
-    if (!window.FB_READY) {
-      console.warn("Firebase lento o bloqueado. Cargando modo local...");
-      window.FB_READY = false; 
-      window.dispatchEvent(new Event('firebase-ready'));
-    }
-  }, 3000);
 </script>
 
 <script>
-  // Manejador de errores global para capturar fallos de carga
-  window.onerror = function(msg, url, line, col, error) {
-    console.log('Capturando error: ', msg);
-    if (msg.includes('Script error')) {
-      alert('Error de conexión con librerías externas. Cargando modo offline seguro.');
-    }
-    return false;
-  };
-</script>
 
 <script>
   // Mock de Firebase por si falla la carga del SDK
