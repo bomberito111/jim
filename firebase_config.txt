@@ -1,0 +1,20 @@
+  const firebaseConfig = {
+    apiKey: "AIzaSyCL5VqDiXUwQo" + "0XLYWV7RZzHleM_9hYcwA",
+    authDomain: "hyper-life-b9819.firebaseapp.com",
+    projectId: "hyper-life-b9819",
+    storageBucket: "hyper-life-b9819.firebasestorage.app",
+    messagingSenderId: "827615869989",
+    appId: "1:827615869989:web:9459ebdc3dc4ec892b13cc",
+    measurementId: "G-T9KM90S34C"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ─── Expose Firebase to global scope ───
+  window.FB_DB = db;
+  window.FB = { doc, setDoc, getDoc, onSnapshot, collection, addDoc, query, orderBy, serverTimestamp, deleteDoc, getDocs };
+  window.FB_READY = true;
+  console.log("Firebase listo");
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
