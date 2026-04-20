@@ -698,6 +698,30 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 
 /* CALENDAR */
 .cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;cursor:default;transition:all .15s;padding:2px}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — pantallas pequeñas
+═══════════════════════════════════════════════ */
+@media (max-width: 375px) {
+  .hl-logo-main { font-size: clamp(48px, 15vw, 72px); }
+  .cel-title { font-size: clamp(48px, 15vw, 72px); }
+  .re-fields { grid-template-columns: repeat(2, 1fr); }
+  .cel-stats { gap: 6px; }
+  .cel-val { font-size: 16px; }
+  .qsval { font-size: 16px; }
+  .view { padding: 12px 10px calc(20px + var(--safe-bottom)); }
+}
+
+@media (max-width: 340px) {
+  .hl-logo-main { font-size: 44px; letter-spacing: 4px; }
+  .cel-title { font-size: 44px; }
+  .sets-hdr, .set-r { gap: 3px; }
+  .set-inp { font-size: 14px; padding: 8px 1px; }
+  .ni { font-size: 8px; }
+  .day-ltr { font-size: 7px; }
+  .day-cell { padding: 7px 1px; }
+  .rt-btn { padding: 7px 9px; font-size: 10px; }
+}
 </style>
 </head>
 <body>
@@ -736,7 +760,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 <div id="app">
   <div id="views">
     <div id="v-home" class="view"></div>
-    <div id="v-workout" style="display:none"></div>
+    <div id="v-workout" class="view" style="display:none;padding:0"></div>
     <div id="v-progress" class="view" style="display:none"></div>
     <div id="v-body" class="view" style="display:none"></div>
     <div id="v-settings" class="view" style="display:none"></div>

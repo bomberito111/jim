@@ -4,7 +4,7 @@
 // guardamos el timestamp ABSOLUTO en IndexedDB y usamos un
 // loop basado en waitUntil + fetch self-ping para mantenernos vivos.
 
-const CACHE = 'jim-sw-v6';
+const CACHE = 'jim-sw-v7';
 const DB_NAME = 'jim-timers';
 
 // ─── Install / Activate ───
