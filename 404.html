@@ -698,38 +698,33 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 
 /* CALENDAR */
 .cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;cursor:default;transition:all .15s;padding:2px}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — pantallas pequeñas
+═══════════════════════════════════════════════ */
+@media (max-width: 375px) {
+  .hl-logo-main { font-size: clamp(48px, 15vw, 72px); }
+  .cel-title { font-size: clamp(48px, 15vw, 72px); }
+  .re-fields { grid-template-columns: repeat(2, 1fr); }
+  .cel-stats { gap: 6px; }
+  .cel-val { font-size: 16px; }
+  .qsval { font-size: 16px; }
+  .view { padding: 12px 10px calc(20px + var(--safe-bottom)); }
+}
+
+@media (max-width: 340px) {
+  .hl-logo-main { font-size: 44px; letter-spacing: 4px; }
+  .cel-title { font-size: 44px; }
+  .sets-hdr, .set-r { gap: 3px; }
+  .set-inp { font-size: 14px; padding: 8px 1px; }
+  .ni { font-size: 8px; }
+  .day-ltr { font-size: 7px; }
+  .day-cell { padding: 7px 1px; }
+  .rt-btn { padding: 7px 9px; font-size: 10px; }
+}
 </style>
 </head>
 <body>
-
-<!-- FIREBASE INIT -->
-<script>
-(function(){
-  try {
-    firebase.initializeApp({
-      apiKey: "AIzaSyCL5VqDiXUwQo" + "0XLYWV7RZzHleM_9hYcwA",
-      authDomain: "hyper-life-b9819.firebaseapp.com",
-      projectId: "hyper-life-b9819",
-      storageBucket: "hyper-life-b9819.firebasestorage.app",
-      messagingSenderId: "827615869989",
-      appId: "1:827615869989:web:9459ebdc3dc4ec892b13cc"
-    });
-    var _db = firebase.firestore();
-    window.FB_DB = _db;
-    window.FB = {
-      doc: function(db, col, id){ return db.collection(col).doc(id); },
-      setDoc: function(ref, data){ return ref.set(data); },
-      getDoc: function(ref){ return ref.get().then(function(s){ return { exists: function(){ return s.exists; }, data: function(){ return s.data(); } }; }); },
-      onSnapshot: function(ref, cb){ return ref.onSnapshot(function(s){ cb({ exists: function(){ return s.exists; }, data: function(){ return s.data(); } }); }); }
-    };
-    window.FB_READY = true;
-    console.log('Firebase listo');
-    window.dispatchEvent(new Event('firebase-ready'));
-  } catch(e) {
-    console.warn('Firebase init failed:', e);
-  }
-})();
-</script>
 
 <div style="position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none">
   <div id="sync-bar-fill"></div>
@@ -765,7 +760,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 <div id="app">
   <div id="views">
     <div id="v-home" class="view"></div>
-    <div id="v-workout" style="display:none"></div>
+    <div id="v-workout" class="view" style="display:none;padding:0"></div>
     <div id="v-progress" class="view" style="display:none"></div>
     <div id="v-body" class="view" style="display:none"></div>
     <div id="v-settings" class="view" style="display:none"></div>
@@ -793,6 +788,35 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
     </button>
   </nav>
 </div>
+
+<!-- FIREBASE INIT -->
+<script>
+(function(){
+  try {
+    firebase.initializeApp({
+      apiKey: "AIzaSyCL5VqDiXUwQo" + "0XLYWV7RZzHleM_9hYcwA",
+      authDomain: "hyper-life-b9819.firebaseapp.com",
+      projectId: "hyper-life-b9819",
+      storageBucket: "hyper-life-b9819.firebasestorage.app",
+      messagingSenderId: "827615869989",
+      appId: "1:827615869989:web:9459ebdc3dc4ec892b13cc"
+    });
+    var _db = firebase.firestore();
+    window.FB_DB = _db;
+    window.FB = {
+      doc: function(db, col, id){ return db.collection(col).doc(id); },
+      setDoc: function(ref, data){ return ref.set(data); },
+      getDoc: function(ref){ return ref.get().then(function(s){ return { exists: function(){ return s.exists; }, data: function(){ return s.data(); } }; }); },
+      onSnapshot: function(ref, cb){ return ref.onSnapshot(function(s){ cb({ exists: function(){ return s.exists; }, data: function(){ return s.data(); } }); }); }
+    };
+    window.FB_READY = true;
+    console.log('Firebase listo');
+    window.dispatchEvent(new Event('firebase-ready'));
+  } catch(e) {
+    console.warn('Firebase init failed:', e);
+  }
+})();
+</script>
 
 <script>
 'use strict';
@@ -1242,7 +1266,7 @@ function getAllEx(){return Object.values(ROUTINE).flatMap(d=>d.exercises||[]);}
    BOOT
 ═══════════════════════════════════════════════ */
 async function boot(){
-  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});if(Notification.permission==='default')Notification.requestPermission();if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r; // blindado ('[SW] ok');navigator.serviceWorker.addEventListener('message','message',e=>{if(e.data?.type==='TIMER_FIRED'&&e.data?.id==='rest'){stopKeepalive();releaseWakeLock();}});}).catch(e=>console.warn('[SW] fail',e));}
+  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});if(Notification.permission==='default')Notification.requestPermission();if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r; // blindado ('[SW] ok');navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='TIMER_FIRED'&&e.data?.id==='rest'){stopKeepalive();releaseWakeLock();}});}).catch(e=>console.warn('[SW] fail',e));}
   loadRoutine();
   const acc=lsGet('accent');
   if(acc) applyAccent(acc.v,acc.r);
@@ -2014,7 +2038,7 @@ async function renderProgCnt(){
     el.innerHTML=sessions.slice().reverse().map((s,idx)=>`
     <div class="hist-item">
       <div class="hist-date">${new Date(s.date).toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
-      <div class="hist-name">${s.emoji||''}${s.rn}</div>
+      <div class="hist-name">${escHtml(s.emoji||'')}${escHtml(s.rn)}</div>
       <div class="hist-meta"><span>⏱ ${fmtDur(s.dur)}</span><span>📦 ${Math.round((s.vol||0)/100)/10}k kg</span><span>✓ ${s.sc} series</span></div>
       <button onclick="deleteSession(${sessions.length-1-idx})" style="position:absolute;top:12px;right:12px;background:rgba(232,69,90,.1);border:1px solid rgba(232,69,90,.2);color:var(--red);border-radius:var(--rsm);padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--hd2)">🗑</button>
     </div>`).join('');return;
@@ -2028,8 +2052,8 @@ async function renderProgCnt(){
       if(pr>0) html+=`<div class="pr-item">
         <div>
           <div class="pr-crown">🏆 PR</div>
-          <div style="font-weight:700;font-size:13px;margin-top:2px;font-family:var(--hd2)">${ex.name}</div>
-          <div style="font-size:10px;color:var(--text2);font-family:var(--hd2)">${ex.g} · ${h.length} sesiones</div>
+          <div style="font-weight:700;font-size:13px;margin-top:2px;font-family:var(--hd2)">${escHtml(ex.name)}</div>
+          <div style="font-size:10px;color:var(--text2);font-family:var(--hd2)">${escHtml(ex.g)} · ${h.length} sesiones</div>
         </div>
         <div style="text-align:right">
           <div class="pr-w">${pr}<span style="font-size:13px;color:var(--text2)">kg</span></div>
