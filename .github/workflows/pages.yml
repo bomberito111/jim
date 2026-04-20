@@ -22,6 +22,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Create or update GitHub Pages site
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.repos.createPagesSite({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                build_type: 'workflow'
+              });
+              console.log('Pages site created with GitHub Actions source.');
+            } catch (e) {
+              if (e.status === 409) {
+                console.log('Pages already exists, ensuring build_type=workflow...');
+                try {
+                  await github.rest.repos.updateInformationAboutPagesSite({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    build_type: 'workflow'
+                  });
+                  console.log('Pages updated to GitHub Actions source.');
+                } catch (e2) {
+                  console.log('Update error (may already be correct):', e2.message);
+                }
+              } else {
+                console.log('Create error:', e.message);
+              }
+            }
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
