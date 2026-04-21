@@ -1256,8 +1256,10 @@ function restoreActiveW(){
 function saveView(v){localStorage.setItem(WK_VIEW_KEY,v);}
 
 function loadRoutine(){
-  const saved=localStorage.getItem('h4_routine');
-  if(saved){try{ROUTINE=JSON.parse(saved);return;}catch(e){}}
+  try{
+    const saved=localStorage.getItem('h4_routine');
+    if(saved){try{ROUTINE=JSON.parse(saved);return;}catch(e){}}
+  }catch(e){}
   ROUTINE=JSON.parse(JSON.stringify(DEFAULT_ROUTINE));
 }
 function saveRoutine(){localStorage.setItem('h4_routine',JSON.stringify(ROUTINE));syncLazy();}
@@ -1267,7 +1269,7 @@ function getAllEx(){return Object.values(ROUTINE).flatMap(d=>d.exercises||[]);}
    BOOT
 ═══════════════════════════════════════════════ */
 async function boot(){
-  if(navigator.storage?.persist) await navigator.storage.persist().catch(()=>{});if(Notification.permission==='default')Notification.requestPermission();if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r; // blindado ('[SW] ok');navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='TIMER_FIRED'&&e.data?.id==='rest'){stopKeepalive();releaseWakeLock();}});}).catch(e=>console.warn('[SW] fail',e));}
+  // Render content first (before any async yields) so the first paint shows content
   loadRoutine();
   const acc=lsGet('accent');
   if(acc) applyAccent(acc.v,acc.r);
@@ -1278,11 +1280,14 @@ async function boot(){
     activeW=saved;
     nav('workout');
     setTimeout(()=>toast('🔄 Retomando entrenamiento…'),400);
-    initSync();
-    return;
+  } else {
+    renderHome();
   }
 
-  await renderHome();
+  // Async setup runs after initial render
+  if(navigator.storage?.persist) navigator.storage.persist().catch(()=>{});
+  if(Notification.permission==='default') Notification.requestPermission().catch(()=>{});
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('/jim/sw.js').then(r=>{window._swReg=r;navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='TIMER_FIRED'&&e.data?.id==='rest'){stopKeepalive();releaseWakeLock();}});}).catch(e=>console.warn('[SW] fail',e));}
 
   initSync().then(ok=>{
     if(ok){
@@ -1330,6 +1335,8 @@ function nav(v){
 ═══════════════════════════════════════════════ */
 async function renderHome(){
   const el=document.getElementById('v-home');
+  if(!el) return;
+  try{
   const today=new Date();
   const dow=today.getDay();
   const day=ROUTINE[curDay]||ROUTINE[dow]||{rest:true,exercises:[]};
@@ -1389,7 +1396,7 @@ async function renderHome(){
   const daySel=[1,2,3,4,5].map(d=>`
     <button class="day-btn ${d===curDay?'sel':''} ${d===dow?'today-btn':''}" onclick="selDay(${d})">
       <span style="font-size:8px;opacity:.5;display:block;letter-spacing:.8px;text-transform:uppercase;font-family:var(--hd2)">${DAY_FULL[d].toUpperCase()}</span>
-      ${ROUTINE[d].emoji} ${ROUTINE[d].name}
+      ${ROUTINE[d]?.emoji||'🏋️'} ${ROUTINE[d]?.name||`Día ${d}`}
     </button>`).join('');
 
   let exPreviews='';
@@ -1489,6 +1496,7 @@ ${recent.length?`
     </div>
   </div>`).join('')}
 </div>`:''}`;
+  }catch(err){console.error('renderHome error:',err);el.innerHTML='<div class="view" style="text-align:center;padding-top:60px"><p style="color:var(--text2)">Cargando…</p></div>';}
 }
 
 function selDay(d){curDay=d;renderHome();}
