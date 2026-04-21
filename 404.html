@@ -31,6 +31,7 @@
   --hd:'Bebas Neue',cursive; --hd2:'Rajdhani',sans-serif;
   --r:16px; --rsm:10px;
   --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-top:env(safe-area-inset-top,0px);
   --glow:0 0 60px rgba(200,200,200,0.04);
   --glow-strong:0 0 40px rgba(200,200,200,0.15);
 }
@@ -72,7 +73,7 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
    APP SHELL
 ═══════════════════════════════════════════════ */
 #app{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
-#views{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;min-height:0;scroll-behavior:smooth}
+#views{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;min-height:0;scroll-behavior:smooth;padding-top:var(--safe-top)}
 .view{padding:16px 14px calc(24px + var(--safe-bottom));animation:vu .25s cubic-bezier(.4,0,.2,1)}
 @keyframes vu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
