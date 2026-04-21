@@ -24,47 +24,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Make repo public and enable Pages
-        uses: actions/github-script@v7
-        with:
-          script: |
-            // Make repo public (required for Pages on free plan)
-            try {
-              await github.rest.repos.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                private: false
-              });
-              console.log('Repo set to public.');
-            } catch (e) {
-              console.log('Could not change visibility:', e.message);
-            }
+      - name: Make repo public
+        run: |
+          RESULT=$(curl -s -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}" \
+            -d '{"private":false}')
+          echo "Visibility result: $(echo $RESULT | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d.get(\"private\",d.get(\"message\",\"unknown\")))' 2>/dev/null)"
 
-            // Enable Pages with GitHub Actions source
-            try {
-              await github.rest.repos.createPagesSite({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                build_type: 'workflow'
-              });
-              console.log('Pages site created.');
-            } catch (e) {
-              if (e.status === 409) {
-                console.log('Pages exists, updating source...');
-                try {
-                  await github.rest.repos.updateInformationAboutPagesSite({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    build_type: 'workflow'
-                  });
-                  console.log('Pages source updated.');
-                } catch (e2) {
-                  console.log('Update note:', e2.message);
-                }
-              } else {
-                console.log('Pages create note:', e.message);
-              }
-            }
+      - name: Enable Pages with GitHub Actions source
+        run: |
+          RESULT=$(curl -s -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" \
+            -d '{"build_type":"workflow"}')
+          echo "Pages create: $(echo $RESULT | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d.get(\"html_url\",d.get(\"message\",\"done\")))' 2>/dev/null)"
+          # Also try update in case it already exists
+          curl -s -X PUT \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" \
+            -d '{"build_type":"workflow"}' > /dev/null 2>&1 || true
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
