@@ -36,9 +36,10 @@
   --glow-strong:0 0 40px rgba(200,200,200,0.15);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{height:100%;overflow:hidden}
+html{height:100%;height:100dvh;overflow:hidden}
 body{
   height:100%;
+  height:100dvh;
   background:var(--bg0);
   color:var(--text);
   font-family:var(--body);
@@ -72,8 +73,8 @@ input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 /* ═══════════════════════════════════════════════
    APP SHELL
 ═══════════════════════════════════════════════ */
-#app{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
-#views{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;min-height:0;scroll-behavior:smooth;padding-top:var(--safe-top)}
+#app{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;height:0}
+#views{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;min-height:0;scroll-behavior:smooth;padding-top:var(--safe-top);height:0}
 .view{padding:16px 14px calc(24px + var(--safe-bottom));animation:vu .25s cubic-bezier(.4,0,.2,1)}
 @keyframes vu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
@@ -1530,6 +1531,8 @@ async function startW(dow){
 
 function renderWorkout(){
   const el=document.getElementById('v-workout');
+  if(!el) return;
+  try{
   if(!activeW){
     el.innerHTML=`<div class="view"><div class="empty">
       <span class="empty-ico">🏋️</span><h3>Sin workout activo</h3>
@@ -1619,6 +1622,7 @@ function renderWorkout(){
   el.innerHTML=html;
   startElapsed();
   setTimeout(()=>scrollToActiveSet(),200);
+  }catch(err){console.error('renderWorkout error:',err);el.innerHTML='<div class="view" style="text-align:center;padding-top:60px"><p style="color:var(--text2)">Error al cargar. <button class="btn bg bsm" onclick="nav(\'home\')">Volver al inicio</button></p></div>';}
 }
 
 function upS(ei,si,f,v){if(!activeW)return;activeW.exercises[ei].sets[si][f]=v;saveActiveW();}
